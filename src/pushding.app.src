@@ -2,6 +2,6 @@
 	{description, "Pushing Daisies"},
 	{vsn, "0.0.1"},
 	{modules, []},
-	{registered, []},
+	{registered, [pushding_sup]},
 	{applications, [kernel,stdlib,cowboy,gproc,jsx]}
 ]}.
