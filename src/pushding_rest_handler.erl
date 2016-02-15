@@ -2,6 +2,7 @@
 
 -export([init/3,
          allowed_methods/2,
+         forbidden/2,
          content_types_accepted/2
         ]).
 
@@ -12,6 +13,19 @@ init(_, _Req, _Opts) ->
 
 allowed_methods(Req, State) ->
     {[<<"POST">>], Req, State}.
+
+forbidden(Req0, State) ->
+    case cowboy_req:header(<<"pushding_app_id">>, Req0) of
+        {undefined, Req1} ->
+            {true, Req1, State};
+        {AppId, Req1} ->
+            case cowboy_req:header(<<"pushding_app_token">>, Req1) of
+                {undefined, Req2} ->
+                    {true, Req2, State};
+                {Token, Req2} ->
+                    {not pushding_app_db:check_token(AppId, Token), Req2, State}
+            end
+    end.
 
 content_types_accepted(Req, State) ->
     {[{{<<"application">>, <<"json">>, '*'}, from_json}],
