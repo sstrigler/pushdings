@@ -8,6 +8,7 @@
       {
           ws.send("hello world!");
           console.log('Message sent');
+          return true;
       }
 
       function open()
@@ -17,7 +18,7 @@
               return true;
       }
       /* @todo: Change to your own server IP address */
-      ws = new WebSocket("ws://localhost:8080");
+      ws = new WebSocket("ws://localhost:8080/ws");
       ws.onopen = function() {
           console.log('Connected');
       };

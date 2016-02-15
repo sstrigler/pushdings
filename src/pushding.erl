@@ -9,8 +9,8 @@
 
 start(_Type, _Args) ->
     Dispatch = cowboy_router:compile([
-        {'_', [{"/", pushding_ws_handler, []},
-               {"/s/", cowboy_static, {priv_file, pushding, "ws.html"}},
+        {'_', [{"/ws", pushding_ws_handler, []},
+               {"/", cowboy_static, {priv_file, pushding, "ws.html"}},
                {"/api", pushding_rest_handler, []}]}
     ]),
     cowboy:start_http(pushding_http_listener, 100, [{port, 8080}],
