@@ -1,8 +1,0 @@
-{application, pushding, [
-                         {description, "Pushing Daisies"},
-                         {vsn, "0.0.1"},
-                         {modules, []},
-                         {registered, [pushding_sup]},
-                         {mod, {pushding, []}},
-                         {applications, [kernel,stdlib,cowboy,gproc,jsx]}
-]}.

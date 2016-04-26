@@ -1,10 +1,18 @@
-PROJECT = pushding
+PROJECT = pushdings
 PROJECT_DESCRIPTION = Pushing Daisies
 PROJECT_VERSION = 0.0.1
 
 DEPS = cowboy gproc jsx
 
+BUILD_DEPS = elvis_mk
+
+dep_elvis_mk = git https://github.com/inaka/elvis.mk.git 784e41b
+
+DEP_PLUGINS = elvis_mk
+
 # Whitespace to be used when creating files from templates.
 SP = 4
 
 include erlang.mk
+
+PLT_APPS = mnesia

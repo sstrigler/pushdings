@@ -1,6 +1,8 @@
 /.erlang.mk/
 /_rel/
 /deps/
-/pushding.d
+/pushdings.d
 /relx
 /ebin/
+/.pushdings.plt
+/elvis

@@ -2,45 +2,45 @@
 <html>
   <head>
     <script type="text/javascript">
-      var ws = new Object;
+    var ws = new Object;
 
-      function send()
-      {
-          ws.send("hello world!");
-          console.log('Message sent');
-          return true;
-      }
+function send()
+{
+    ws.send("hello world!");
+    console.log('Message sent');
+    return true;
+}
 
-      function open()
-      {
-          if (!("WebSocket" in window)) {
-              alert("This browser does not support WebSockets");
-              return true;
-      }
-      /* @todo: Change to your own server IP address */
-      ws = new WebSocket("ws://localhost:8080/ws");
-      ws.onopen = function() {
-          console.log('Connected');
-      };
-      ws.onmessage = function (evt)
-      {
-          var received_msg = evt.data;
-          console.log("Received: " + received_msg);
-          var txt = document.createTextNode("Simon says: " + received_msg
-                                           );
-          document.getElementById('msgs').appendChild(txt);
-      };
-      ws.onclose = function()
-      {
-          console.log('Connection closed');
-      };
-      }
+function connect() {
+    if (!("WebSocket" in window)) {
+        alert("This browser does not support WebSockets");
+    }
+
+    var appid = prompt("Which app id?", "123");
+
+    /* @todo: Change to your own server IP address */
+    ws = new WebSocket("ws://localhost:8080/ws", "foo");
+    ws.onopen = function() {
+        console.log('Connected');
+    };
+    ws.onmessage = function (evt)
+    {
+        var received_msg = evt.data;
+        console.log("Received: " + received_msg);
+        var txt = document.createTextNode("Simon says: " + received_msg  + "\n");
+        document.getElementById('msgs').appendChild(txt);
+    };
+    ws.onclose = function()
+    {
+        console.log('Connection closed');
+    };
+    return false;
+}
     </script>
   </head>
   <body>
     <div id="sse">
-      <a href="javascript:open()">Open websocket connection</a><br/>
-      <a href="javascript:send()">Send Message</a>
+      <button onclick="return connect()" href='#'>Open websocket connection</button><br/>
     </div>
     <div id="msgs">
     </div>
