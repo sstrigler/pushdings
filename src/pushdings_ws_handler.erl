@@ -41,12 +41,18 @@ websocket_handle({text, Data}, Req, ?PROTOCOL = State) ->
        user_token := UserToken } = Json = jsx:decode(
                                             Data,
                                             [return_maps, {labels, atom}]),
-    case is_valid_user(AppId, UserId, UserToken) of
+    case is_not_rate_limited(AppId) of
         true ->
-            pushdings:subscribe(AppId),
-            {ok, Req, State};
-        _    ->
-            lager:warning("Could not auth user: ~p", [Json]),
+            case is_valid_user(AppId, UserId, UserToken) of
+                true  ->
+                    pushdings:subscribe(AppId),
+                    {ok, Req, State};
+                false ->
+                    lager:warning("Could not auth user: ~p", [Json]),
+                    {shutdown, Req, State}
+            end;
+        false ->
+            lager:warning("App ~p rate limited", [AppId]),
             {shutdown, Req, State}
     end;
 websocket_handle(Frame, Req, State) ->
@@ -67,6 +73,7 @@ terminate(_Reason, _Req, _State) ->
     ok.
 
 %% ----- ----- ----- ----- -----  < internal > --- ----- ----- ----- ----- -----
+
 -spec is_valid_user(binary(), binary(), binary()) -> boolean().
 is_valid_user(AppId, UserId, UserToken) ->
     Uri = pushdings_app:get_auth_uri(AppId),
@@ -82,3 +89,7 @@ check_user(Uri0, UserId, UserToken) ->
             Body == <<"1">>;
         _ -> false
     end.
+
+-spec is_not_rate_limited(binary()) -> boolean().
+is_not_rate_limited(AppId) ->
+    pushdings_app:get_max_clients(AppId) > pushdings:num_subscriptions(AppId).
