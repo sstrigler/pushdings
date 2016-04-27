@@ -17,7 +17,7 @@ websocket_init(_Prot, Req0, _Opts) ->
         {ok, undefined, Req1} ->
             lager:debug("no protocols given, asuming default", []),
             Req2 = cowboy_req:compact(Req1),
-            {ok, Req2, ?PROTOCOL};
+            {ok, Req2, ?PROTOCOL, hibernate};
         {ok, Subprotocols, Req1} ->
             lager:debug("protocols: ~p", [Subprotocols]),
             case lists:member(?PROTOCOL, Subprotocols) of
@@ -26,7 +26,7 @@ websocket_init(_Prot, Req0, _Opts) ->
                     Req3 = cowboy_req:set_resp_header(
                              <<"sec-websocket-protocol">>,
                              ?PROTOCOL, Req2),
-                    {ok, Req3, ?PROTOCOL};
+                    {ok, Req3, ?PROTOCOL, hibernate};
                 false ->
                     lager:warning("No supported protocol found in ~p",
                                   [Subprotocols]),
