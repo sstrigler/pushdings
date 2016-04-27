@@ -9,23 +9,21 @@
 
 start(_Type, _Args) ->
     Dispatch = cowboy_router:compile([
-        {'_', [{"/ws", pushdings_ws_handler, []},
-               {"/", cowboy_static, {priv_file, pushdings, "ws.html"}},
-               {"/api", pushdings_rest_handler, []}]}
+        {'_',
+         [{"/ws",  pushdings_ws_handler,   []},
+          {"/",    cowboy_static,          {priv_file, pushdings, "ws.html"}},
+          {"/api", pushdings_rest_handler, []}]}
     ]),
-    {ok, _Pid} = cowboy:start_http(pushdings_http_listener, 100, [{port, 8080}],
+    {ok, _Pid} = cowboy:start_http(pushdings_http_listener, 100,
+                                   [{port, 8080}],
                                    [{env, [{dispatch, Dispatch}]}]
                                   ),
     pushdings_sup:start_link().
 
-stop(_State) ->
-    cowboy:stop_listener(pushdings_http_listener).
+stop(_State) -> cowboy:stop_listener(pushdings_http_listener).
 
-start() ->
-    application:ensure_all_started(pushdings).
+start() -> application:ensure_all_started(pushdings).
 
-publish(Topic, Message) ->
-    gproc_ps:publish(l, {?MODULE, Topic}, Message).
+publish(Topic, Message) -> gproc_ps:publish(l, {?MODULE, Topic}, Message).
 
-subscribe(Topic) ->
-    gproc_ps:subscribe(l, {?MODULE, Topic}).
+subscribe(Topic) -> gproc_ps:subscribe(l, {?MODULE, Topic}).
