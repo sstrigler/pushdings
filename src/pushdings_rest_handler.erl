@@ -46,11 +46,11 @@ from_json(Req0, AppId) ->
 %% -----------------------------------------------------------------------------
 
 get_app_token(Req0) ->
-    case cowboy_req:header(<<"pushdings_app_id">>, Req0) of
+    case cowboy_req:header(<<"pushdings-app-id">>, Req0) of
         {undefined, Req1} ->
             {not_found, Req1};
         {AppId, Req1} ->
-            case cowboy_req:header(<<"pushdings_app_token">>, Req1) of
+            case cowboy_req:header(<<"pushdings-app-token">>, Req1) of
                 {undefined, Req2} ->
                     {not_found, Req2};
                 {Token, Req2} ->
