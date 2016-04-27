@@ -2,7 +2,7 @@ PROJECT = pushdings
 PROJECT_DESCRIPTION = Pushing Daisies
 PROJECT_VERSION = 0.0.1
 
-DEPS = cowboy gproc lager jsx
+DEPS = cowboy gproc hackney lager jsx
 
 BUILD_DEPS = elvis_mk
 
