@@ -2,13 +2,39 @@
 <html>
   <head>
     <script type="text/javascript">
-var ws = new Object;
 
-function send()
+var app_id = "123";
+var app_token = "topSecret";
+
+var user_id = "user_123";
+var user_token = "my_token";
+
+var api_uri = "http://localhost:8080/api";
+
+function send(form, preset)
 {
-    ws.send("hello world!");
-    console.log('Message sent');
-    return true;
+    var el = form.elements.message;
+    console.log(el.value);
+
+    if (el.value == preset) return false;
+
+    ajax_send(el.value);
+
+    el.value = '';
+    return false;
+}
+
+function ajax_send(msg) {
+    var r = new XMLHttpRequest();
+    r.open("POST", api_uri, false);
+    r.setRequestHeader("Content-type", "application/json");
+    r.setRequestHeader("Pushdings-App-Id", app_id);
+    r.setRequestHeader("Pushdings-App-Token", app_token);
+    r.send(JSON.stringify(msg));
+}
+
+function maybe_clear(el, preset) {
+    if (el.value == preset) el.value = '';
 }
 
 function connect() {
@@ -16,20 +42,18 @@ function connect() {
         alert("This browser does not support WebSockets");
     }
 
-    var appid = prompt("Which app id?", "123");
-
     /* @todo: Change to your own server IP address */
-    ws = new WebSocket("ws://localhost:8080/ws", "pushdings_v1");
+    var ws = new WebSocket("ws://localhost:8080/ws", "pushdings_v1");
     ws.onopen = function() {
         console.log('Connected');
         ws.send(JSON.stringify(
-            {app_id: appid, user_id: "user_123", user_token: "my_token"}));
+            {app_id: app_id, user_id: user_id, user_token: user_token}));
     };
     ws.onmessage = function (evt)
     {
         var received_msg = evt.data;
         console.log("Received: " + received_msg);
-        var text = document.createTextNode("Simon says: " + received_msg);
+        var text = document.createTextNode("Simple Simon says: " + received_msg);
         var div  = document.createElement("div");
         div.appendChild(text);
         document.getElementById('msgs').appendChild(div);
@@ -40,14 +64,15 @@ function connect() {
     };
     return false;
 }
-onload  = function() {
-    document.getElementById('connect_button').focus();
-};
+onload  = connect;
     </script>
   </head>
   <body>
     <div id="sse">
-      <button onclick="return connect()" href='#' id="connect_button">Open websocket connection</button><br/>
+    <form onsubmit='return send(this, "Your message ...");'>
+    <textarea name='message' onclick='maybe_clear(this, "Your message ...");'>Your message ...</textarea><br/>
+    <button type='submit' href='#' ">Send message to all</button><br/>
+    </form>
     </div>
     <div id="msgs">
     </div>
