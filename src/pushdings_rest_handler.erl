@@ -8,7 +8,7 @@
 
 -export([from_json/2]).
 
--import(pushdings_app_db, [is_token_valid/2]).
+-import(pushdings_app, [is_token_valid/2]).
 
 init(_, _Req, _Opts) ->
     {upgrade, protocol, cowboy_rest}.
