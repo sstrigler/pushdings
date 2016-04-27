@@ -35,10 +35,15 @@ get_auth_uri(AppId) -> get_prop(AppId, #pushdings_app.auth_uri).
 get_max_clients(AppId) -> get_prop(AppId, #pushdings_app.max_clients).
 
 %% ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
-%% [TODO] Persist table
-init() -> mnesia:create_table(
-            pushdings_app,
-            [{attributes, record_info(fields, pushdings_app)}]).
+init() ->
+    _ = mnesia:stop(),
+    _ = mnesia:create_schema([node()]),
+    _ = mnesia:start(),
+    mnesia:create_table(
+      pushdings_app,
+      [{disc_copies, [node()]},
+       {attributes, record_info(fields, pushdings_app)}]).
+
 
 %% ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 -spec is_token_valid(binary(), binary()) -> boolean().
