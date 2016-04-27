@@ -68,9 +68,7 @@ terminate(_Reason, _Req, _State) ->
 
 %% ----- ----- ----- ----- -----  < internal > --- ----- ----- ----- ----- -----
 
-is_valid_user(AppId, UserId, UserToken) when AppId     /= <<>>,
-                                             UserId    /= <<>>,
-                                             UserToken /= <<>> ->
+is_valid_user(AppId, UserId, UserToken) when AppId /= <<>> ->
     case pushdings_app_db:get_app_auth_uri(AppId) of
         {ok, Uri}          -> check_user(Uri, UserId, UserToken);
         {error, not_found} -> false
