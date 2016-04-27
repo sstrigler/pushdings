@@ -2,7 +2,7 @@
 <html>
   <head>
     <script type="text/javascript">
-    var ws = new Object;
+var ws = new Object;
 
 function send()
 {
@@ -19,16 +19,20 @@ function connect() {
     var appid = prompt("Which app id?", "123");
 
     /* @todo: Change to your own server IP address */
-    ws = new WebSocket("ws://localhost:8080/ws", "foo");
+    ws = new WebSocket("ws://localhost:8080/ws", "pushdings_v1");
     ws.onopen = function() {
         console.log('Connected');
+        ws.send(JSON.stringify(
+            {app_id: appid, user_id: "user_123", user_token: "my_token"}));
     };
     ws.onmessage = function (evt)
     {
         var received_msg = evt.data;
         console.log("Received: " + received_msg);
-        var txt = document.createTextNode("Simon says: " + received_msg  + "\n");
-        document.getElementById('msgs').appendChild(txt);
+        var text = document.createTextNode("Simon says: " + received_msg);
+        var div  = document.createElement("div");
+        div.appendChild(text);
+        document.getElementById('msgs').appendChild(div);
     };
     ws.onclose = function()
     {
@@ -36,11 +40,14 @@ function connect() {
     };
     return false;
 }
+onload  = function() {
+    document.getElementById('connect_button').focus();
+};
     </script>
   </head>
   <body>
     <div id="sse">
-      <button onclick="return connect()" href='#'>Open websocket connection</button><br/>
+      <button onclick="return connect()" href='#' id="connect_button">Open websocket connection</button><br/>
     </div>
     <div id="msgs">
     </div>
