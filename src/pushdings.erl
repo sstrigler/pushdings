@@ -18,6 +18,7 @@ start(_Type, _Args) ->
                                    [{port, 8080}],
                                    [{env, [{dispatch, Dispatch}]}]
                                   ),
+    pushdings_app_db:init(),
     pushdings_sup:start_link().
 
 stop(_State) -> cowboy:stop_listener(pushdings_http_listener).
