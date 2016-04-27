@@ -8,6 +8,8 @@
 
 -export([from_json/2]).
 
+-import(pushdings_app_db, [is_token_valid/2]).
+
 init(_, _Req, _Opts) ->
     {upgrade, protocol, cowboy_rest}.
 
@@ -16,11 +18,12 @@ allowed_methods(Req, State) ->
 
 forbidden(Req0, State) ->
     case get_app_token(Req0) of
-        {not_found, Req1} ->
-            {true, Req1, State};
+        {not_found, Req1}    -> {true, Req1, State};
         {AppId, Token, Req2} ->
-            {not pushdings_app_db:check_token(AppId, Token),
-             Req2, AppId}
+            %% AppId becomes State
+            {not is_token_valid(AppId, Token),
+             Req2,
+             AppId}
     end.
 
 content_types_accepted(Req, State) ->
