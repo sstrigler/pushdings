@@ -2,7 +2,7 @@ PROJECT = pushdings
 PROJECT_DESCRIPTION = Pushing Daisies
 PROJECT_VERSION = 0.0.1
 
-DEPS = cowboy gproc jsx
+DEPS = cowboy gproc lager jsx
 
 BUILD_DEPS = elvis_mk
 
@@ -14,5 +14,8 @@ DEP_PLUGINS = elvis_mk
 SP = 4
 
 include erlang.mk
+
+ERLC_OPTS += +'{parse_transform, lager_transform}'
+TEST_ERLC_OPTS += +'{parse_transform, lager_transform}'
 
 PLT_APPS = mnesia

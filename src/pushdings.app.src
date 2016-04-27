@@ -1,8 +1,14 @@
-{application, pushdings, [
-                          {description, "Pushing Daisies"},
-                          {vsn, "0.0.1"},
-                          {modules, []},
-                          {registered, [pushdings_sup]},
-                          {mod, {pushdings, []}},
-                          {applications, [kernel,stdlib,cowboy,gproc,jsx]}
-]}.
+{application, pushdings,
+ [{description, "Pushing Daisies"},
+  {vsn, "0.0.1"},
+  {modules, []},
+  {registered, [pushdings_sup]},
+  {mod, {pushdings, []}},
+  {applications, [kernel,
+                  stdlib,
+                  lager,
+                  mnesia,
+                  cowboy,
+                  gproc,
+                  jsx]}]
+}.
