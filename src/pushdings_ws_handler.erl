@@ -63,7 +63,7 @@ websocket_info({gproc_ps_event, {pushdings, _Topic}, Message}, Req, State) ->
     lager:debug("pushing ~p", [Message]),
     {reply, {text, jsx:encode(Message)}, Req, State};
 websocket_info(Info, Req, State) ->
-    io:format("unknown message received ~p~n", [Info]),
+    lager:warning("unknown message received ~p~n", [Info]),
     {ok, Req, State}.
 
 websocket_terminate(_Reason, _Req, _State) -> ok.
