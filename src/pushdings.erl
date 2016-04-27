@@ -1,7 +1,8 @@
 -module(pushdings).
 -behaviour(application).
 
--export([publish/2,
+-export([num_subscriptions/1,
+         publish/2,
          start/0,
          subscribe/1]).
 
@@ -28,3 +29,5 @@ start() -> application:ensure_all_started(pushdings).
 publish(Topic, Message) -> gproc_ps:publish(l, {?MODULE, Topic}, Message).
 
 subscribe(Topic) -> gproc_ps:subscribe(l, {?MODULE, Topic}).
+
+num_subscriptions(Topic) -> length(gproc_ps:list_subs(l, {?MODULE, Topic})).
