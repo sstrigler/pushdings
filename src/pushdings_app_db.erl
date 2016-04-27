@@ -17,8 +17,12 @@
 -spec create_app(binary(), binary()) -> ok.
 create_app(AppId, Token) when is_binary(AppId), AppId /= <<>>,
                               is_binary(Token), Token /= <<>> ->
-    [] = mnesia:dirty_read(pushdings_app, AppId), % ensure not exists
-    mnesia:dirty_write(#pushdings_app{id=AppId, token=Token}).
+    F = fun() ->
+                [] = mnesia:read(pushdings_app, AppId), % ensure not exists
+                mnesia:write(#pushdings_app{id=AppId, token=Token})
+        end,
+    {atomic, ok} = mnesia:transaction(F),
+    ok.
 
 %% ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 -spec get_app_auth_uri(binary()) -> {ok, binary()} | {error, not_found}.
