@@ -27,7 +27,7 @@ create(AppId, Token) when is_binary(AppId), AppId /= <<>>,
     ok.
 
 %% ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
--spec get_auth_uri(binary()) -> {ok, binary()} | {error, not_found}.
+-spec get_auth_uri(binary()) -> binary().
 get_auth_uri(AppId) -> get_prop(AppId, #pushdings_app.auth_uri).
 
 %% ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
@@ -48,7 +48,7 @@ init() ->
 %% ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 -spec is_token_valid(binary(), binary()) -> boolean().
 is_token_valid(AppId, Token) ->
-    {ok, Token} == get_prop(AppId, #pushdings_app.token).
+    Token == get_prop(AppId, #pushdings_app.token).
 
 %% ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 -spec set_auth_uri(binary(), binary()) -> ok.
@@ -70,9 +70,7 @@ set_max_clients(AppId, MaxClients) when is_integer(MaxClients),
     mnesia:dirty_write(App#pushdings_app{max_clients = MaxClients}).
 
 %% ----- ----- ----- ----- -----  < internal > --- ----- ----- ----- ----- -----
--spec get_prop(binary(), pos_integer()) -> {ok, term()} | {error, not_found}.
+-spec get_prop(binary(), pos_integer()) -> term().
 get_prop(AppId, PropIdx) ->
-    case mnesia:dirty_read(pushdings_app, AppId) of
-        [App] -> {ok, element(PropIdx, App)};
-        []    -> {error, not_found}
-    end.
+    [App] =  mnesia:dirty_read(pushdings_app, AppId),
+    element(PropIdx, App).

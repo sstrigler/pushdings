@@ -67,14 +67,12 @@ terminate(_Reason, _Req, _State) ->
     ok.
 
 %% ----- ----- ----- ----- -----  < internal > --- ----- ----- ----- ----- -----
+-spec is_valid_user(binary(), binary(), binary()) -> boolean().
+is_valid_user(AppId, UserId, UserToken) ->
+    Uri = pushdings_app:get_auth_uri(AppId),
+    check_user(Uri, UserId, UserToken).
 
-is_valid_user(AppId, UserId, UserToken) when AppId /= <<>> ->
-    case pushdings_app:get_auth_uri(AppId) of
-        {ok, Uri}          -> check_user(Uri, UserId, UserToken);
-        {error, not_found} -> false
-    end;
-is_valid_user(_, _, _)                                         -> false.
-
+-spec check_user(binary(), binary(), binary()) -> boolean().
 check_user(<<>>, _, _)              -> true;
 check_user(Uri0, UserId, UserToken) ->
     Uri = <<Uri0/binary, "?user=", UserId/binary, "&token=", UserToken/binary>>,
