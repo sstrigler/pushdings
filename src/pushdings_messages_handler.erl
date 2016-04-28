@@ -13,7 +13,7 @@ init(_, _Req, _Opts) -> {upgrade, protocol, cowboy_rest}.
 allowed_methods(Req, State) -> {[<<"POST">>], Req, State}.
 
 forbidden(Req0, _State) ->
-    {AppId, Token, Req1} = get_app_token(Req0), 
+    {AppId, Token, Req1} = get_appid_and_token(Req0),
     %% AppId becomes State
     {not pushdings_app:is_token_valid(AppId, Token), Req1, AppId}.
 
@@ -35,7 +35,7 @@ from_json(Req0, AppId) ->
 
 %% -----------------------------------------------------------------------------
 
-get_app_token(Req0) ->
+get_appid_and_token(Req0) ->
     {AppId, Req1} = cowboy_req:header(<<"pushdings-app-id">>, Req0, <<>>),
     {Token, Req2} = cowboy_req:header(<<"pushdings-app-token">>, Req1, <<>>),
     {AppId, Token, Req2}.
