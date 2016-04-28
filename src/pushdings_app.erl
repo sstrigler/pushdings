@@ -21,7 +21,8 @@ create(AppId, Token) when is_binary(AppId), AppId /= <<>>,
                               is_binary(Token), Token /= <<>> ->
     F = fun() ->
                 [] = mnesia:read(pushdings_app, AppId), % ensure not exists
-                mnesia:write(#pushdings_app{id=AppId, token=Token})
+                mnesia:write(#pushdings_app{id    = AppId,
+                                            token = crypto:hash(sha256, Token)})
         end,
     {atomic, ok} = mnesia:transaction(F),
     ok.
@@ -48,7 +49,7 @@ init() ->
 %% ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 -spec is_token_valid(binary(), binary()) -> boolean().
 is_token_valid(AppId, Token) ->
-    Token == get_prop(AppId, #pushdings_app.token).
+    crypto:hash(sha256, Token) == get_prop(AppId, #pushdings_app.token).
 
 %% ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 -spec set_auth_uri(binary(), binary()) -> ok.
@@ -60,7 +61,7 @@ set_auth_uri(AppId, Uri) when is_binary(Uri) ->
 -spec set_token(binary(), binary()) -> ok.
 set_token(AppId, Token) when is_binary(Token), Token /= <<>> ->
     [App] = mnesia:dirty_read(pushdings_app, AppId),
-    mnesia:dirty_write(App#pushdings_app{token = Token}).
+    mnesia:dirty_write(App#pushdings_app{token = crypto:hash(sha256, Token)}).
 
 %% ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 -spec set_max_clients(binary(), pos_integer()) -> ok.
