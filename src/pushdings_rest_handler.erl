@@ -10,25 +10,17 @@
 
 -import(pushdings_app, [is_token_valid/2]).
 
-init(_, _Req, _Opts) ->
-    {upgrade, protocol, cowboy_rest}.
+init(_, _Req, _Opts) -> {upgrade, protocol, cowboy_rest}.
 
-allowed_methods(Req, State) ->
-    {[<<"POST">>], Req, State}.
+allowed_methods(Req, State) -> {[<<"POST">>], Req, State}.
 
-forbidden(Req0, State) ->
-    case get_app_token(Req0) of
-        {not_found, Req1}    -> {true, Req1, State};
-        {AppId, Token, Req2} ->
-            %% AppId becomes State
-            {not is_token_valid(AppId, Token),
-             Req2,
-             AppId}
-    end.
+forbidden(Req0, _State) ->
+    {AppId, Token, Req1} = get_app_token(Req0), 
+    %% AppId becomes State
+    {not is_token_valid(AppId, Token), Req1, AppId}.
 
 content_types_accepted(Req, State) ->
-    {[{{<<"application">>, <<"json">>, '*'}, from_json}],
-     Req, State}.
+    {[{{<<"application">>, <<"json">>, '*'}, from_json}], Req, State}.
 
 %% -----------------------------------------------------------------------------
 
@@ -46,14 +38,6 @@ from_json(Req0, AppId) ->
 %% -----------------------------------------------------------------------------
 
 get_app_token(Req0) ->
-    case cowboy_req:header(<<"pushdings-app-id">>, Req0) of
-        {undefined, Req1} ->
-            {not_found, Req1};
-        {AppId, Req1} ->
-            case cowboy_req:header(<<"pushdings-app-token">>, Req1) of
-                {undefined, Req2} ->
-                    {not_found, Req2};
-                {Token, Req2} ->
-                    {AppId, Token, Req2}
-            end
-    end.
+    {AppId, Req1} = cowboy_req:header(<<"pushdings-app-id">>, Req0, <<>>),
+    {Token, Req2} = cowboy_req:header(<<"pushdings-app-token">>, Req1, <<>>),
+    {AppId, Token, Req2}.
