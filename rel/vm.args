@@ -1,3 +1,4 @@
 -name pushdings@127.0.0.1
+-mnesia dir db
 -setcookie pushdings
 -heart

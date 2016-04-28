@@ -7,3 +7,5 @@
 /.pushdings.plt
 /elvis
 /log/
+/erl_crash.dump
+/db/
