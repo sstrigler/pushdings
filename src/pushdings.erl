@@ -9,16 +9,18 @@
 -export([start/2, stop/1]).
 
 start(_Type, _Args) ->
+
     Dispatch = cowboy_router:compile([
-        {'_',
-         [{"/ws",  pushdings_ws_handler,   []},
-          {"/",    cowboy_static,          {priv_file, pushdings, "ws.html"}},
-          {"/api", pushdings_rest_handler, []}]}
-    ]),
+        {'_', [{"/ws", pushdings_ws_handler, []},
+               {"/", cowboy_static, {priv_file, pushdings, "ws.html"}},
+               {"/messages", pushdings_messages_handler, []}]}
+                                     ]),
+
     {ok, _Pid} = cowboy:start_http(pushdings_http_listener, 100,
                                    [{port, 8080}],
                                    [{env, [{dispatch, Dispatch}]}]
                                   ),
+
     pushdings_app:init(),
     pushdings_sup:start_link().
 

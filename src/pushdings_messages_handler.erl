@@ -1,4 +1,4 @@
--module(pushdings_rest_handler).
+-module(pushdings_messages_handler).
 
 -export([init/3,
          allowed_methods/2,
