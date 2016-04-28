@@ -36,13 +36,13 @@ fi
 
 new=$major.$minor.$patch
 
-echo bumping $app from $old to $new
+echo "bumping $app from $old to $new"
 
 git flow release start $new
 
-files="$appfile relx.config Makefile docker_run.sh"
+files="$appfile relx.config Makefile"
 for i in $files; do
-    echo patching $i;
+    echo "patching $i";
     sed -i s/$old/$new/ $i;
     git add $i;
 done
@@ -50,8 +50,8 @@ git commit -m"bump version $new"
 
 git flow release finish $new
 git checkout master
-git push
-git push --tags
+#git push
+#git push --tags
 
 git checkout develop
 git pull
@@ -59,13 +59,13 @@ git pull
 let patch=$patch+1
 snapshot="$major.$minor.$patch-SNAPSHOT"
 
-echo bumping $app to snapshot $snapshot
+echo "bumping $app to snapshot $snapshot"
 
-files="$appfile relx.config Makefile docker_run.sh"
+files="$appfile relx.config Makefile"
 for i in $files; do
-    echo patching $i;
+    echo "patching $i";
     sed -i s/$new/$snapshot/ $i;
     git add $i;
 done
 git commit -m"bump version $snapshot"
-git push
+#git push
