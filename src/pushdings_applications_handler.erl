@@ -30,14 +30,15 @@ from_json(Req0, State) ->
         AppId = gen_uuid(),
         AppToken = gen_uuid(),
 
-        pushdings_app:create(AppId, AppToken),
+        pushdings_application:create(AppId, AppToken),
 
         AuthUri = maps:get(auth_uri, Json, <<>>),
-        pushdings_app:set_auth_uri(AppId, AuthUri),
+        pushdings_application:set_auth_uri(AppId, AuthUri),
 
         {Uri, Req2} = cowboy_req:url(Req1),
 
-        RespBody = jsx:encode((pushdings_app:as_map(AppId))#{token => AppToken}),
+        RespBody = jsx:encode(
+                     (pushdings_application:as_map(AppId))#{token => AppToken}),
 
         Req3 = cowboy_req:set_resp_body(RespBody, Req2),
 

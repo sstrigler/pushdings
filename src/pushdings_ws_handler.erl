@@ -76,7 +76,7 @@ terminate(_Reason, _Req, _State) ->
 
 -spec is_valid_user(binary(), binary(), binary()) -> boolean().
 is_valid_user(AppId, UserId, UserToken) ->
-    Uri = pushdings_app:get_auth_uri(AppId),
+    Uri = pushdings_application:get_auth_uri(AppId),
     check_user(Uri, UserId, UserToken).
 
 -spec check_user(binary(), binary(), binary()) -> boolean().
@@ -92,4 +92,5 @@ check_user(Uri0, UserId, UserToken) ->
 
 -spec is_not_rate_limited(binary()) -> boolean().
 is_not_rate_limited(AppId) ->
-    pushdings_app:get_max_clients(AppId) > pushdings:num_subscriptions(AppId).
+    pushdings_application:get_max_clients(AppId)
+        > pushdings:num_subscriptions(AppId).

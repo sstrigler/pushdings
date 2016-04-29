@@ -22,7 +22,7 @@
 %% ----------------------------- < application > -------------------------------
 start(_Type, _Args) ->
     mnesia:wait_for_tables(
-      pushdings_app:tables() ++
+      pushdings_application:tables() ++
           pushdings_registration:tables(), 5000),
 
     Dispatch = cowboy_router:compile([
@@ -49,7 +49,7 @@ stop(_State) -> cowboy:stop_listener(pushdings_http_listener).
 install(Nodes) ->
     ok = mnesia:create_schema(Nodes),
     ok = application:start(mnesia),
-    pushdings_app:install(Nodes),
+    pushdings_application:install(Nodes),
     pushdings_registration:install(Nodes).
 
 

@@ -1,4 +1,4 @@
--module(pushdings_app).
+-module(pushdings_application).
 
 -export([as_map/1,
          create/2,
@@ -18,7 +18,7 @@
          max_clients = 3 :: pos_integer()}).
 
 %% -----------------------------------------------------------------------------
--spec as_map(AppId :: binary()) -> iodata().
+-spec as_map(AppId :: binary()) -> map().
 as_map(AppId) ->
     [#pushdings_app{id          = Id,
                     auth_uri    = Uri,

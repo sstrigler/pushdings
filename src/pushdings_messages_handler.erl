@@ -15,7 +15,7 @@ allowed_methods(Req, State) -> {[<<"POST">>], Req, State}.
 forbidden(Req0, _State) ->
     {AppId, Token, Req1} = get_appid_and_token(Req0),
     %% AppId becomes State
-    {not pushdings_app:is_token_valid(AppId, Token), Req1, AppId}.
+    {not pushdings_application:is_token_valid(AppId, Token), Req1, AppId}.
 
 content_types_accepted(Req, State) ->
     {[{{<<"application">>, <<"json">>, '*'}, from_json}], Req, State}.
