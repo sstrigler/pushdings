@@ -28,6 +28,8 @@ start(_Type, _Args) ->
     Dispatch = cowboy_router:compile([
         {'_', [
                {"/", cowboy_static, {priv_file, pushdings, "ws.html"}},
+               {"/applications", pushdings_applications_handler, []},
+               {"/applications/:id", pushdings_application_handler, []},
                {"/messages", pushdings_messages_handler, []},
                {"/registrations/:email", pushdings_registration_handler, []},
                {"/registrations", pushdings_registrations_handler, []},

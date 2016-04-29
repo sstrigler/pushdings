@@ -4,6 +4,7 @@
          create/1,
          exists/1,
          install/1,
+         is_password_valid/2,
          tables/0]).
 
 -record(pushdings_registration,
@@ -61,12 +62,12 @@ create(#{email := Email, password := Password})
     Result.
 
 %% -----------------------------------------------------------------------------
--spec exists(binary()) -> boolean().
+-spec exists(Email :: binary()) -> boolean().
 exists(Email) ->
     length(mnesia:dirty_read(pushdings_registration, Email)) == 1.
 
 %% -----------------------------------------------------------------------------
--spec install(list(atom())) -> ok.
+-spec install(Nodes :: list(atom())) -> ok.
 install(Nodes) ->
     {atomic, ok} =
         mnesia:create_table(
@@ -74,6 +75,15 @@ install(Nodes) ->
           [{disc_copies, Nodes},
            {attributes, record_info(fields, pushdings_registration)}]),
     ok.
+
+%% -----------------------------------------------------------------------------
+-spec is_password_valid(Email :: binary(), Password :: binary()) -> boolean().
+is_password_valid(Email, Password) ->
+    HashedPassword = crypto:hash(sha256, Password),
+    case mnesia:dirty_read(pushdings_registration, Email) of
+        [#pushdings_registration{password = HashedPassword}] -> true;
+        _                                                    -> false
+    end.
 
 %% -----------------------------------------------------------------------------
 -spec tables() -> list(atom()).

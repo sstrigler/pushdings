@@ -1,6 +1,7 @@
 -module(pushdings_app).
 
--export([create/2,
+-export([as_map/1,
+         create/2,
          get_auth_uri/1,
          get_max_clients/1,
          install/1,
@@ -17,7 +18,18 @@
          max_clients = 3 :: pos_integer()}).
 
 %% -----------------------------------------------------------------------------
--spec create(binary(), binary()) -> ok.
+-spec as_map(AppId :: binary()) -> iodata().
+as_map(AppId) ->
+    [#pushdings_app{id          = Id,
+                    auth_uri    = Uri,
+                    max_clients = Clients}] =
+        mnesia:dirty_read(pushdings_app, AppId),
+    #{app_id      => Id,
+      auth_uri    => Uri,
+      max_clients => Clients}.
+
+%% -----------------------------------------------------------------------------
+-spec create(AppId :: binary(), Token :: binary()) -> ok.
 create(AppId, Token) when is_binary(AppId), AppId /= <<>>,
                               is_binary(Token), Token /= <<>> ->
     F = fun() ->
@@ -29,15 +41,15 @@ create(AppId, Token) when is_binary(AppId), AppId /= <<>>,
     ok.
 
 %% -----------------------------------------------------------------------------
--spec get_auth_uri(binary()) -> binary().
+-spec get_auth_uri(AppId :: binary()) -> binary().
 get_auth_uri(AppId) -> get_prop(AppId, #pushdings_app.auth_uri).
 
 %% -----------------------------------------------------------------------------
--spec get_max_clients(binary()) -> non_neg_integer().
+-spec get_max_clients(AppId :: binary()) -> non_neg_integer().
 get_max_clients(AppId) -> get_prop(AppId, #pushdings_app.max_clients).
 
 %% -----------------------------------------------------------------------------
--spec install(list(atom())) -> ok.
+-spec install(Nodes :: list(atom())) -> ok.
 install(Nodes) ->
     {atomic, ok} = mnesia:create_table(
                      pushdings_app,
@@ -46,24 +58,24 @@ install(Nodes) ->
     ok.
 
 %% -----------------------------------------------------------------------------
--spec is_token_valid(binary(), binary()) -> boolean().
+-spec is_token_valid(AppId :: binary(), Token :: binary()) -> boolean().
 is_token_valid(AppId, Token) ->
     crypto:hash(sha256, Token) == get_prop(AppId, #pushdings_app.token).
 
 %% -----------------------------------------------------------------------------
--spec set_auth_uri(binary(), binary()) -> ok.
+-spec set_auth_uri(AppId :: binary(), Uri :: binary()) -> ok.
 set_auth_uri(AppId, Uri) when is_binary(Uri) ->
     [App] = mnesia:dirty_read(pushdings_app, AppId),
     mnesia:dirty_write(App#pushdings_app{auth_uri = Uri}).
 
 %% -----------------------------------------------------------------------------
--spec set_token(binary(), binary()) -> ok.
+-spec set_token(AppId :: binary(), Token :: binary()) -> ok.
 set_token(AppId, Token) when is_binary(Token), Token /= <<>> ->
     [App] = mnesia:dirty_read(pushdings_app, AppId),
     mnesia:dirty_write(App#pushdings_app{token = crypto:hash(sha256, Token)}).
 
 %% -----------------------------------------------------------------------------
--spec set_max_clients(binary(), pos_integer()) -> ok.
+-spec set_max_clients(AppId :: binary(), MaxClient :: pos_integer()) -> ok.
 set_max_clients(AppId, MaxClients) when is_integer(MaxClients),
                                         MaxClients >= 0 ->
     [App] = mnesia:dirty_read(pushdings_app, AppId),
@@ -74,7 +86,7 @@ set_max_clients(AppId, MaxClients) when is_integer(MaxClients),
 tables() -> [pushdings_app].
 
 %% ------------------------------ < internal > ---------------------------------
--spec get_prop(binary(), pos_integer()) -> term().
+-spec get_prop(AppId:: binary(), PropIdx :: pos_integer()) -> term().
 get_prop(AppId, PropIdx) ->
     [App] =  mnesia:dirty_read(pushdings_app, AppId),
     element(PropIdx, App).

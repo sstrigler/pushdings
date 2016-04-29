@@ -21,8 +21,8 @@ from_json(Req0, State) ->
     try
         Json = jsx:decode(Body, [{labels, atom}, return_maps]),
         Id = pushdings_registration:create(Json),
-        {Uri0, Req2} = cowboy_req:url(Req0),
-        {{true, uri(Uri0, Id)}, Req2, State}
+        {Uri, Req2} = cowboy_req:url(Req1),
+        {{true, uri(Uri, Id)}, Req2, State}
     catch
         _:_Error ->
             {false, Req1, State}
