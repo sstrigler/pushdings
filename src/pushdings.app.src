@@ -10,5 +10,6 @@
                   mnesia,
                   cowboy,
                   gproc,
+                  hackney,
                   jsx]}]
 }.
