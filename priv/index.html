@@ -67,8 +67,8 @@ onload  = connect;
   <body>
     <div id="sse">
     <form onsubmit='return send(this, "Your message ...");'>
-    <textarea name='message' onclick='maybe_clear(this, "Your message ...");'>Your message ...</textarea><br/>
-    <button type='submit' href='#' ">Send message to all</button><br/>
+    <textarea name='message' cols='80' rows='3' onclick='maybe_clear(this, "Your message ...");'>Your message ...</textarea><br/>
+    <button type='submit' href='#'>Send message to all</button><br/>
     </form>
     </div>
     <div id="msgs">
