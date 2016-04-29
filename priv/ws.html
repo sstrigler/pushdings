@@ -4,12 +4,11 @@
     <script type="text/javascript">
 
 var app_id = "123";
-var app_token = "topSecret";
 
 var user_id = "user_123";
 var user_token = "my_token";
 
-var api_uri = "http://localhost:8080/messages";
+var api_uri = "http://123:topSecret@localhost:8080/messages";
 
 function send(form, preset)
 {
@@ -28,8 +27,6 @@ function ajax_send(msg) {
     var r = new XMLHttpRequest();
     r.open("POST", api_uri, false);
     r.setRequestHeader("Content-type", "application/json");
-    r.setRequestHeader("Pushdings-App-Id", app_id);
-    r.setRequestHeader("Pushdings-App-Token", app_token);
     r.send(JSON.stringify(msg));
 }
 

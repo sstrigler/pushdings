@@ -2,7 +2,7 @@
 
 -export([init/3,
          allowed_methods/2,
-         forbidden/2,
+         is_authorized/2,
          content_types_accepted/2
         ]).
 
@@ -12,10 +12,16 @@ init(_, _Req, _Opts) -> {upgrade, protocol, cowboy_rest}.
 
 allowed_methods(Req, State) -> {[<<"POST">>], Req, State}.
 
-forbidden(Req0, State) ->
-    {RegId, Req1} = cowboy_req:header(<<"pushdings-reg-id">>, Req0, <<>>),
-    {RegPw, Req2} = cowboy_req:header(<<"pushdings-reg-pw">>, Req1, <<>>),
-    {not pushdings_registration:is_password_valid(RegId, RegPw), Req2, State}.
+is_authorized(Req0, State) ->
+    case cowboy_req:parse_header(<<"authorization">>, Req0) of
+        {ok, {<<"basic">>, {RegId, RegPw}}, Req1} ->
+            case pushdings_registration:is_password_valid(RegId, RegPw) of
+                true  -> {true, Req1, State};
+                false -> {{false, <<"Basic realm=\"pushdings\"">>}, Req1, State}
+            end;
+        {ok, undefined, Req1} ->
+            {{false, <<"Basic realm=\"pushdings\"">>}, Req1, State}
+    end.
 
 content_types_accepted(Req, State) ->
     {[{{<<"application">>, <<"json">>, '*'}, from_json}], Req, State}.
