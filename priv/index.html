@@ -1,14 +1,25 @@
-<!DOCTYPE HTML>
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
+    <link rel="stylesheet" href="/s/github-markdown.css">
+    <style>
+    .markdown-body {
+        box-sizing: border-box;
+        min-width: 200px;
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 45px;
+    }
+    </style>
+
     <script type="text/javascript">
 
-var app_id = "123";
+var app_id = "afdf18dd-4a9e-43a3-bf6a-93bcb9bcb5bc";
 
 var user_id = "user_123";
 var user_token = "my_token";
 
-var api_uri = "http://123:topSecret@localhost:8080/messages";
+var api_uri = "http://afdf18dd-4a9e-43a3-bf6a-93bcb9bcb5bc:292e0e73-a897-4698-b402-39327e55edd1@localhost:8080/messages";
 
 function send(form, preset)
 {
@@ -25,7 +36,7 @@ function send(form, preset)
 
 function ajax_send(msg) {
     var r = new XMLHttpRequest();
-    r.open("POST", api_uri, false);
+    r.open("POST", api_uri, true);
     r.setRequestHeader("Content-type", "application/json");
     r.send(JSON.stringify(msg));
 }
@@ -63,8 +74,101 @@ function connect() {
 }
 onload  = connect;
     </script>
+
+
   </head>
-  <body>
+  <body class="markdown-body">
+<h1 id="pusheldy-dingseldey">Pusheldy Dingseldey</h1>
+<p>Minimalistic, elegant, powerful</p>
+
+<p>Add real time capabilities to just any website. Build chats, tickers, live voting and polls, scoreboards, billboards, exploding trains ... &lt;insert your idea here &gt;.
+
+<h2 id="how-">How?</h2>
+<h3 id="register">Register</h3>
+<pre><code>$ curl -i -X POST -H &quot;Content-type: application/json&quot; -d &#39;{&quot;email&quot;: &quot;smeagol@example.com&quot;, &quot;password&quot;:&quot;myPrecious&quot;}&#39; https://pushdings.com/registrations
+HTTP/1.1 303 See Other
+server: Cowboy
+date: Fri, 29 Apr 2016 20:35:13 GMT
+content-length: 0
+content-type: text/html
+location: https://pushdings.com/registrations/smeagol%40example.com
+</code></pre><p>This will send an email to <code>smeagol@example.com</code> with a <em>token</em> that
+you&#39;ll need to confirm your registration. Watch out for the <em>location
+header</em> (redirect) since it points you to where you&#39;ll have to send
+your confirmation request to.</p>
+<p>You can only have <em>one account per email address</em>.</p>
+<h3 id="confirm-with-token">Confirm with token</h3>
+<pre><code>$ curl -i -X PUT -H &quot;Content-type: application/json&quot; -d &#39;{&quot;token&quot;: &quot;7135b31b511245ebb15bcab5e04bc763&quot;}&#39; https://smeagol%40example.com:myPrecious@pushdings.com/registrations/smeagol%40example.com
+HTTP/1.1 204 No Content
+server: Cowboy
+date: Sat, 30 Apr 2016 08:28:23 GMT
+content-length: 0
+content-type: text/html
+</code></pre><p>Assuming that <code>7135b31b511245ebb15bcab5e04bc763</code> was the token you got
+by email.</p>
+<h3 id="create-app">Create App</h3>
+<pre><code>$ curl -i -X POST -H &quot;Content-type: application/json&quot; -d &#39;{&quot;auth_uri&quot;: &quot;http://example.com/pushdings_auth.php&quot;}&#39; https://smeagol%40example.com:myPrecious@pushdings.com/applications
+HTTP/1.1 303 See Other
+server: Cowboy
+date: Sat, 30 Apr 2016 08:41:30 GMT
+content-length: 158
+content-type: text/html
+location: https://pushdings.com/applications/afdf18dd-4a9e-43a3-bf6a-93bcb9bcb5bc
+
+{&quot;app_id&quot;:&quot;afdf18dd-4a9e-43a3-bf6a-93bcb9bcb5bc&quot;,&quot;auth_uri&quot;:&quot;http://example.com/pushdings_auth.php&quot;,&quot;max_clients&quot;:3,&quot;token&quot;:&quot;292e0e73-a897-4698-b402-39327e55edd1&quot;}
+</code></pre><p>If you don&#39;t need authorization handling of your websocket users you
+can leave auth_uri away (no payload).</p>
+<pre><code>$ curl -i -X POST -H &quot;Content-type: application/json&quot; https://smeagol%40example.com:myPrecious@pushdings.com/applications
+HTTP/1.1 303 See Other
+server: Cowboy
+date: Sat, 30 Apr 2016 08:44:56 GMT
+content-length: 126
+content-type: text/html
+location: https://pushdings.com/applications/322bfa18-6864-43d4-ade2-b5c19b70b19e
+
+{&quot;app_id&quot;:&quot;322bfa18-6864-43d4-ade2-b5c19b70b19e&quot;,&quot;auth_uri&quot;:&quot;&quot;,&quot;max_clients&quot;:3,&quot;token&quot;:&quot;a9f8e245-c13a-43cc-82e6-faef6e4bbfbe&quot;}
+</code></pre><h3 id="can-i-haz-websocket-">Can I haz Websocket?</h3>
+<pre><code class="lang-javascript">var app_id = &quot;afdf18dd-4a9e-43a3-bf6a-93bcb9bcb5bc&quot;;
+
+var user_id = &quot;user_123&quot;;
+var user_token = &quot;my_token&quot;;
+
+function connect() {
+    var ws = new WebSocket(&quot;wss://pushdings.com/ws&quot;, &quot;pushdings_v1&quot;);
+
+    ws.onopen = function() {
+        console.log(&#39;Connected&#39;);
+        ws.send(JSON.stringify(
+            {app_id: app_id, user_id: user_id, user_token: user_token}));
+    };
+
+    ws.onmessage = function (evt)
+    {
+        var received_msg = evt.data;
+        console.log(&quot;Received: &quot; + received_msg);
+    };
+    ws.onclose = function()
+    {
+        console.log(&#39;Connection closed&#39;);
+    };
+    return false;
+}
+onload  = connect;
+</code></pre>
+<p>This results in a call to
+<code>http://example.com/pushdings_auth.php?user=user_123&amp;token=my_token</code>. If
+you want to grant access to that user return 1.</p>
+<h3 id="push-and-profit">Push and Profit</h3>
+<pre><code>$ curl -i -X POST -H &quot;Content-type: application/json&quot; -d &#39;&quot;ahoi!&quot;&#39; http://afdf18dd-4a9e-43a3-bf6a-93bcb9bcb5bc:292e0e73-a897-4698-b402-39327e55edd1@pushdings.com/messages
+HTTP/1.1 204 No Content
+server: Cowboy
+date: Sat, 30 Apr 2016 08:49:11 GMT
+content-length: 0
+content-type: text/html
+</code></pre><p>This is a broadcast to any users connected via websocket.</p>
+
+<h3>Demo (expect more to come!)</h3>
+
     <div id="sse">
     <form onsubmit='return send(this, "Your message ...");'>
     <textarea name='message' cols='80' rows='3' onclick='maybe_clear(this, "Your message ...");'>Your message ...</textarea><br/>
@@ -73,5 +177,6 @@ onload  = connect;
     </div>
     <div id="msgs">
     </div>
+
   </body>
 </html>
