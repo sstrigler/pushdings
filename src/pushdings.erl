@@ -3,7 +3,9 @@
 
 -export([start/2, stop/1]).
 
--export([install/1,
+-export([config/1,
+         config/2,
+         install/1,
          lift/1,
          num_subscriptions/1,
          publish/2,
@@ -40,10 +42,19 @@ start(_Type, _Args) ->
                {"/ws",                pushdings_ws_handler, []}
               ]}]),
 
-    {ok, _Pid} = cowboy:start_http(pushdings_http_listener, 100,
-                                   [{port, 8080}],
+    {ok, _Pid} =
+        case config(ssl) of
+            true ->
+                cowboy:start_https(pushdings_http_listener, 100,
+                                   config(ssl_opts),
                                    [{env, [{dispatch, Dispatch}]}]
-                                  ),
+                                  );
+            false ->
+                cowboy:start_http(pushdings_http_listener, 100,
+                                  config(tcp_opts),
+                                  [{env, [{dispatch, Dispatch}]}]
+                                 )
+        end,
 
     pushdings_sup:start_link().
 
@@ -69,17 +80,25 @@ stop() -> application:stop(?MODULE).
 
 %% ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 
-publish(Topic, Message) -> gproc_ps:publish(l, {?MODULE, Topic}, Message).
-
-subscribe(Topic) -> gproc_ps:subscribe(l, {?MODULE, Topic}).
-
-num_subscriptions(Topic) -> length(gproc_ps:list_subs(l, {?MODULE, Topic})).
-
-%% ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
-
 lift(Error) when is_tuple(Error), element(1, Error) == error -> Error;
 lift(Ok)    when is_tuple(Ok), element(1, Ok) == ok          -> Ok;
 lift(Other)                                                     -> {ok, Other}.
+
+%% ----- ----- ----- ----- ----- -- < gproc > ---- ----- ----- ----- ----- -----
+
+-define(SCOPE, l).
+
+publish(Topic, Message) -> gproc_ps:publish(?SCOPE, {?MODULE, Topic}, Message).
+
+subscribe(Topic) -> gproc_ps:subscribe(?SCOPE, {?MODULE, Topic}).
+
+num_subscriptions(Topic) -> length(gproc_ps:list_subs(l, {?MODULE, Topic})).
+
+
+config(Key) -> gproc:get_env(?SCOPE, ?MODULE, Key, [os_env, app_env]).
+
+config(Key, Default) ->
+    gproc:get_env(?SCOPE, ?MODULE, Key, [os_env, app_env, {default, Default}]).
 
 %% ----- ----- ----- ----- ----- -- < lager > ---- ----- ----- ----- ----- -----
 

@@ -11,5 +11,7 @@
                   cowboy,
                   gproc,
                   hackney,
-                  jsx]}]
+                  jsx]}],
+ {env, [{ssl, false},
+        {tcp_opts, [{port, 8080}]}]}
 }.
