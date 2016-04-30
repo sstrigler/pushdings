@@ -1,10 +1,12 @@
 -module(pushdings_registration).
 
--export([confirm/1,
+-export([confirm/2,
          create/1,
          exists/1,
-         install/1,
-         is_password_valid/2,
+         is_password_valid/2]).
+
+%% maintenance
+-export([install/1,
          tables/0]).
 
 -record(pushdings_registration,
@@ -17,15 +19,12 @@
         }).
 
 %% -----------------------------------------------------------------------------
--spec confirm(#{email => binary(), password => binary(), token => binary()})
-             -> ok.
-confirm(#{email := Email, password := Password, token := Token}) ->
+
+-spec confirm(Email :: binary(), Token :: binary()) -> ok.
+confirm(Email, Token) ->
     F = fun() ->
                 [Registration] = mnesia:read(pushdings_registration, Email),
-                %% check password
-                OrigPassword = Registration#pushdings_registration.password,
-                OrigPassword = crypto:hash(sha256, Password),
-                %% check token
+
                 Token = list_to_binary(
                           uuid:uuid_to_string(
                             Registration#pushdings_registration.token,
@@ -38,7 +37,8 @@ confirm(#{email := Email, password := Password, token := Token}) ->
     {atomic, ok} = mnesia:transaction(F),
     ok.
 
-%% -----------------------------------------------------------------------------
+%% ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+
 -spec create(#{email => binary(), password => binary()}) -> binary().
 create(#{email := Email, password := Password})
   when Email /= <<>>, Password /= <<>> ->
@@ -61,22 +61,14 @@ create(#{email := Email, password := Password})
     {atomic, Result} = mnesia:transaction(F),
     Result.
 
-%% -----------------------------------------------------------------------------
+%% ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+
 -spec exists(Email :: binary()) -> boolean().
 exists(Email) ->
     length(mnesia:dirty_read(pushdings_registration, Email)) == 1.
 
-%% -----------------------------------------------------------------------------
--spec install(Nodes :: list(atom())) -> ok.
-install(Nodes) ->
-    {atomic, ok} =
-        mnesia:create_table(
-          pushdings_registration,
-          [{disc_copies, Nodes},
-           {attributes, record_info(fields, pushdings_registration)}]),
-    ok.
+%% ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 
-%% -----------------------------------------------------------------------------
 -spec is_password_valid(Email :: binary(), Password :: binary()) -> boolean().
 is_password_valid(Email, Password) ->
     HashedPassword = crypto:hash(sha256, Password),
@@ -86,6 +78,18 @@ is_password_valid(Email, Password) ->
     end.
 
 %% -----------------------------------------------------------------------------
+
+-spec install(Nodes :: list(atom())) -> ok.
+install(Nodes) ->
+    {atomic, ok} =
+        mnesia:create_table(
+          pushdings_registration,
+          [{disc_copies, Nodes},
+           {attributes, record_info(fields, pushdings_registration)}]),
+    ok.
+
+%% ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+
 -spec tables() -> list(atom()).
 tables() -> [pushdings_registration].
 
