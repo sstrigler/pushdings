@@ -1,3 +1,4 @@
+%%-*- mode: erlang -*-
 {application, pushdings,
  [{description, "Pusheldy Dingseldey"},
   {vsn, "0.0.1"},
@@ -11,7 +12,7 @@
                   cowboy,
                   gproc,
                   hackney,
-                  jsx]}],
- {env, [{ssl, false},
-        {tcp_opts, [{port, 8080}]}]}
-}.
+                  jsx]},
+  {env, [{ssl, false},
+         {tcp_opts, [{port, 8080}]}]}
+ ]}.
