@@ -1,5 +1,5 @@
 {application, pushdings,
- [{description, "Pushing Daisies"},
+ [{description, "Pusheldy Dingseldey"},
   {vsn, "0.0.1"},
   {modules, []},
   {registered, [pushdings_sup]},

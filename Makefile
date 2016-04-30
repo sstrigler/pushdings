@@ -1,5 +1,5 @@
 PROJECT = pushdings
-PROJECT_DESCRIPTION = Pushing Daisies
+PROJECT_DESCRIPTION = Pusheldy Dingseldey
 PROJECT_VERSION = 0.0.1
 
 DEPS = cowboy eper gen_smtp gproc hackney jsx lager uuid
