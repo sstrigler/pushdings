@@ -33,3 +33,6 @@ include erlang.mk
 
 ERLC_OPTS += +'{parse_transform, lager_transform}'
 TEST_ERLC_OPTS += +'{parse_transform, lager_transform}'
+
+tarball: rel
+	cd _rel && tar cfvz ../$(PROJECT)-$(PROJECT_VERSION).tar.gz $(PROJECT) ; cd ..
