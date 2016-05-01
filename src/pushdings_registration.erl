@@ -98,20 +98,19 @@ tables() -> [pushdings_registration].
                                             | {error, term()}
                                             | {error, atom(), term()}.
 send_email(Email, Token) ->
+    MailFrom = pushdings:config(mail_from),
+    MailOpts = pushdings:config(mail_opts, []),
     Message =
         io_lib:format(
           "Subject: Confirm your pushdings registration\r\n"
-          "From: pushdings <registration@pushdings.com>\r\n"
+          "From: pushdings <~s>\r\n"
           "To: ~s\r\n\r\n"
           "To complete your registration at pushdings please fill in this"
           " token:\r\n\r\n"
           "\t~s\r\n\r\n"
           "Sincerely, your pushdings",
-                [Email, Token]),
+                [MailFrom, Email, Token]),
     pushdings:lift(
       gen_smtp_client:send_blocking(
-        {"registration@pushdings.com", [Email], Message},
-        [{relay, "mail.strigler.de"},
-         {ssl, true},
-         {username, "stefan@strigler.de"},
-         {password, "tltuae18"}])).
+        {MailFrom, [Email], Message},
+        MailOpts)).
