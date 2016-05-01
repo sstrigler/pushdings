@@ -13,12 +13,12 @@
     </style>
 
     <script type="text/javascript">
-var app_id = "afdf18dd-4a9e-43a3-bf6a-93bcb9bcb5bc";
+var app_id = "3ae9742a-d1c7-494a-abea-01e1cb00fec3";
 
 var user_id = "user_123";
 var user_token = "my_token";
 
-var api_uri = "http://afdf18dd-4a9e-43a3-bf6a-93bcb9bcb5bc:292e0e73-a897-4698-b402-39327e55edd1@localhost:8080/messages";
+var api_uri = "https://3ae9742a-d1c7-494a-abea-01e1cb00fec3:317074b1-1611-4740-8ba1-7797bb4ace37@pushdings.com/messages";
 
 function send(form, preset)
 {
@@ -50,7 +50,7 @@ function connect() {
     }
 
     /* @todo: Change to your own server IP address */
-    var ws = new WebSocket("ws://localhost:8080/ws", "pushdings_v1");
+    var ws = new WebSocket("wss://pushdings.com/ws", "pushdings_v1");
     ws.onopen = function() {
         console.log('Connected');
         ws.send(JSON.stringify(
