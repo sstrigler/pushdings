@@ -47,12 +47,14 @@ start(_Type, _Args) ->
             true ->
                 cowboy:start_https(pushdings_http_listener, 100,
                                    config(ssl_opts),
-                                   [{env, [{dispatch, Dispatch}]}]
+                                   [{max_keepalive, 1024},
+                                    {env, [{dispatch, Dispatch}]}]
                                   );
             false ->
                 cowboy:start_http(pushdings_http_listener, 100,
                                   config(tcp_opts),
-                                  [{env, [{dispatch, Dispatch}]}]
+                                  [{max_keepalive, 1024},
+                                   {env, [{dispatch, Dispatch}]}]
                                  )
         end,
 
