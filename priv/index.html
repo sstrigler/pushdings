@@ -88,11 +88,25 @@ onload  = connect;
 
     <p>This allows to increase overall responsiveness and thus the overall user experience on your website.</p>
 
-    <p>Build chats, games, gambling and betting systems, live voting and poll systems, tickers, scoreboards, billboards, exploding trains ... &lt;insert your idea here &gt;.</p>
+    <p>Build chats, games, gambling and betting systems, live voting and poll systems, tickers, scoreboards, billboards, exploding trains ... &lt;insert your idea here&gt;.</p>
 
-    <p>And best of all it's super easy to do. <em>pushdings</em> does not enforce any predefined protocols or data formats on you, just use whatever you like most: JSON, XML, you name it.</p>
+    <p>And best of all it's super easy to do so. <em>pushdings</em> does not enforce any predefined protocols or data formats on you, just use whatever you like most: JSON/XML, SSE/STOMP, you name it.</p>
 
     <p>If you want to know more, don't hesitate to <a href="mailto:info@pushdings.com">contact us</a>!</p>
+
+    <h3>Demo</h3>
+
+    <p>Currently we support broadcasts to all users connected only, expect more to come!</p>
+
+    <div id="sse">
+      <form onsubmit='return send(this, "Your message ...");'>
+        <textarea name='message' cols='80' rows='3' onclick='maybe_clear(this, "Your message ...");'>Your message ...</textarea><br/>
+        <button type='submit' href='#'>Send message to all</button><br/>
+      </form>
+    </div>
+    <div id="msgs">
+    </div>
+
 
     <h2 id="how-">How?</h2>
     <h3 id="register">Register</h3>
@@ -192,17 +206,6 @@ content-length: 0
 content-type: text/html
 </code></pre>
     <p>This is a broadcast to any users connected via websocket.</p>
-
-    <h3>Demo (expect more to come!)</h3>
-
-    <div id="sse">
-      <form onsubmit='return send(this, "Your message ...");'>
-        <textarea name='message' cols='80' rows='3' onclick='maybe_clear(this, "Your message ...");'>Your message ...</textarea><br/>
-        <button type='submit' href='#'>Send message to all</button><br/>
-      </form>
-    </div>
-    <div id="msgs">
-    </div>
 
   </body>
 </html>
