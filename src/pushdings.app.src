@@ -12,7 +12,9 @@
                   cowboy,
                   gproc,
                   hackney,
-                  jsx]},
+                  jsx,
+                  uuid,
+                  eper]},
   {env, [{ssl, false},
          {tcp_opts, [{port, 8080}]}]}
  ]}.
