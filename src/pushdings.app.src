@@ -7,14 +7,19 @@
   {mod, {pushdings, []}},
   {applications, [kernel,
                   stdlib,
-                  lager,
                   mnesia,
+                  inets,
+                  lager,
                   cowboy,
                   gproc,
+                  gen_smtp,
                   hackney,
                   jsx,
                   uuid,
                   eper]},
   {env, [{ssl, false},
-         {tcp_opts, [{port, 8080}]}]}
+         {tcp_opts, [{port, 8080}]},
+         {mail_from, "registration@pushdings.com"},
+         {mail_opts, "localhost"}
+        ]}
  ]}.
