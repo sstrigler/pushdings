@@ -38,8 +38,8 @@ function send(form, preset)
 
 function ajax_send(msg) {
     var r = new XMLHttpRequest();
-    r.withCredentials = true;
-    r.open("POST", api_uri, true, app_id, app_token);
+    r.open("POST", api_uri, true);
+    r.setRequestHeader("Authorization", "Basic " + btoa(app_id + ":" + app_token));
     r.setRequestHeader("Content-type", "application/json");
     r.send(JSON.stringify(msg));
 }
