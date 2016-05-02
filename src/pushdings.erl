@@ -42,23 +42,17 @@ start(_Type, _Args) ->
                {"/ws",                pushdings_ws_handler, []}
               ]}]),
 
-    {ok, _Pid} =
-        case config(ssl) of
-            true ->
-                cowboy:start_https(pushdings_http_listener, 100,
-                                   config(ssl_opts),
-                                   [{max_keepalive, 1024},
-                                    {env, [{dispatch, Dispatch}]}]
-                                  );
-            false ->
-                cowboy:start_http(pushdings_http_listener, 100,
-                                  config(tcp_opts),
-                                  [{max_keepalive, 1024},
-                                   {env, [{dispatch, Dispatch}]}]
-                                 )
-        end,
+    {StartFun, Config} = cowboy(config(ssl)),
+    {ok, _Pid} = StartFun(pushdings_http_listener, 100,
+                             Config,
+                             [{max_keepalive, 1024},
+                              {env, [{dispatch, Dispatch}]}]
+                            ),
 
     pushdings_sup:start_link().
+
+cowboy(true)  -> {fun cowboy:start_https/4, config(ssl_opts)};
+cowboy(false) -> {fun cowboy:start_http/4, config(tcp_opts)}.
 
 stop(_State) -> cowboy:stop_listener(pushdings_http_listener).
 

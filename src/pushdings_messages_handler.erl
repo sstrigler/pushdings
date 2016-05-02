@@ -16,14 +16,18 @@ rest_init(Req0, State) ->
         {undefined, Req1} -> {ok, Req1, State};
         {Origin, Req1}    ->
             %% set CORS headers
-            Req2 = cowboy_req:set_resp_header(<<"access-control-allow-origin">>,
-                                              Origin, Req1),
-            Req3 = cowboy_req:set_resp_header(<<"access-control-allow-methods">>,
-                                              <<"POST, OPTIONS">>, Req2),
+            Req2 = cowboy_req:set_resp_header(
+                     <<"access-control-allow-origin">>,
+                     Origin, Req1),
+            Req3 = cowboy_req:set_resp_header(
+                     <<"access-control-allow-methods">>,
+                     <<"POST, OPTIONS">>, Req2),
             Req4 = cowboy_req:set_resp_header(
-                     <<"access-control-allow-credentials">>, <<"true">>, Req3),
+                     <<"access-control-allow-credentials">>,
+                     <<"true">>, Req3),
             Req5 = cowboy_req:set_resp_header(
-                     <<"access-control-allow-headers">>, <<"authorization,content-type">>, Req4),
+                     <<"access-control-allow-headers">>,
+                     <<"authorization,content-type">>, Req4),
             {ok, Req5, State}
     end.
 
@@ -37,10 +41,9 @@ is_authorized(Req, State) ->
             case cowboy_req:parse_header(<<"authorization">>, Req0) of
                 {ok, {<<"basic">>, {AppId, Token}}, Req1} ->
                     case pushdings_application:is_token_valid(AppId, Token) of
-                        true ->
-                            %% AppId becomes State
-                            {true, Req1, AppId};
-                        false -> {{false, <<"Basic realm=\"pushdings\"">>}, Req1, State}
+                        true  -> {true, Req1, AppId};
+                        false -> {{false, <<"Basic realm=\"pushdings\"">>},
+                                  Req1, State}
                     end;
                 {ok, undefined, Req1} ->
                     {{false, <<"Basic realm=\"pushdings\"">>}, Req1, State}
