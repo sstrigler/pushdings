@@ -25,15 +25,15 @@ snapshot=`echo $old | awk -F"[\.-]" '{print $4}'`
 
 if [ ! -z $1 ]; then
     if [ $1 == 'minor' ]; then
-        minor=$minor+1
+        minor=`expr $minor + 1`
         patch=0
     elif [ $1 == 'major' ]; then
-        major=$major+1
+        major=`expr $major + 1`
         minor=0
         patch=0
     fi
 else
-    patch=$path+1
+    patch=`expr $path + 1`
 fi
 
 new=$major.$minor.$patch
