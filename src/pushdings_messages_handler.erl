@@ -23,7 +23,7 @@ rest_init(Req0, State) ->
             Req4 = cowboy_req:set_resp_header(
                      <<"access-control-allow-credentials">>, <<"true">>, Req3),
             Req5 = cowboy_req:set_resp_header(
-                     <<"access-control-allow-headers">>, <<"content-type">>, Req4),
+                     <<"access-control-allow-headers">>, <<"authorization,content-type">>, Req4),
             {ok, Req5, State}
     end.
 
