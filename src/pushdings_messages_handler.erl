@@ -43,7 +43,6 @@ is_authorized(Req, State) ->
                         false -> {{false, <<"Basic realm=\"pushdings\"">>}, Req1, State}
                     end;
                 {ok, undefined, Req1} ->
-                    lager:debug("authorization header missing", []),
                     {{false, <<"Basic realm=\"pushdings\"">>}, Req1, State}
             end
     end.
