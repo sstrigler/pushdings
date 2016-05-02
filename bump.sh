@@ -32,7 +32,7 @@ if [ ! -z $1 ]; then
         minor=0
         patch=0
     fi
-else; then
+else
     let patch=$path+1
 fi
 
