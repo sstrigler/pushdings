@@ -33,7 +33,7 @@ if [ ! -z $1 ]; then
         patch=0
     fi
 else
-    patch=`expr $path + 1`
+    patch=`expr $patch + 1`
 fi
 
 new=$major.$minor.$patch
