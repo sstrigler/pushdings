@@ -45,7 +45,7 @@ git flow release start $new
 files="$appfile relx.config Makefile"
 for i in $files; do
     echo "patching $i";
-    sed -i s/$old/$new/ $i;
+    sed -i "" s/$old/$new/ $i;
     git add $i;
 done
 git commit -m"bump version $new"
