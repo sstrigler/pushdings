@@ -1,14 +1,25 @@
+%%-*- mode: erlang -*-
 {application, pushdings,
- [{description, "Pushing Daisies"},
+ [{description, "Pusheldy Dingseldey"},
   {vsn, "0.0.1"},
   {modules, []},
   {registered, [pushdings_sup]},
   {mod, {pushdings, []}},
   {applications, [kernel,
                   stdlib,
-                  lager,
                   mnesia,
+                  inets,
+                  lager,
                   cowboy,
                   gproc,
-                  jsx]}]
-}.
+                  gen_smtp,
+                  hackney,
+                  jsx,
+                  uuid,
+                  eper]},
+  {env, [{ssl, false},
+         {tcp_opts, [{port, 8080}]},
+         {mail_from, "registration@pushdings.com"},
+         {mail_opts, "localhost"}
+        ]}
+ ]}.

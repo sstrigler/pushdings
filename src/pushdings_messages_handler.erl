@@ -1,8 +1,9 @@
 -module(pushdings_messages_handler).
 
 -export([init/3,
+         rest_init/2,
          allowed_methods/2,
-         forbidden/2,
+         is_authorized/2,
          content_types_accepted/2
         ]).
 
@@ -10,12 +11,44 @@
 
 init(_, _Req, _Opts) -> {upgrade, protocol, cowboy_rest}.
 
-allowed_methods(Req, State) -> {[<<"POST">>], Req, State}.
+rest_init(Req0, State) ->
+    case cowboy_req:header(<<"origin">>, Req0) of
+        {undefined, Req1} -> {ok, Req1, State};
+        {Origin, Req1}    ->
+            %% set CORS headers
+            Req2 = cowboy_req:set_resp_header(
+                     <<"access-control-allow-origin">>,
+                     Origin, Req1),
+            Req3 = cowboy_req:set_resp_header(
+                     <<"access-control-allow-methods">>,
+                     <<"POST, OPTIONS">>, Req2),
+            Req4 = cowboy_req:set_resp_header(
+                     <<"access-control-allow-credentials">>,
+                     <<"true">>, Req3),
+            Req5 = cowboy_req:set_resp_header(
+                     <<"access-control-allow-headers">>,
+                     <<"authorization,content-type">>, Req4),
+            {ok, Req5, State}
+    end.
 
-forbidden(Req0, _State) ->
-    {AppId, Token, Req1} = get_appid_and_token(Req0),
-    %% AppId becomes State
-    {not pushdings_app:is_token_valid(AppId, Token), Req1, AppId}.
+allowed_methods(Req, State) -> {[<<"OPTIONS">>, <<"POST">>], Req, State}.
+
+is_authorized(Req, State) ->
+    case cowboy_req:method(Req) of
+        %% no auth for OPTIONS due to CORS
+        {<<"OPTIONS">>, Req0} -> {true, Req0, State};
+        {_Any,          Req0} ->
+            case cowboy_req:parse_header(<<"authorization">>, Req0) of
+                {ok, {<<"basic">>, {AppId, Token}}, Req1} ->
+                    case pushdings_application:is_token_valid(AppId, Token) of
+                        true  -> {true, Req1, AppId};
+                        false -> {{false, <<"Basic realm=\"pushdings\"">>},
+                                  Req1, State}
+                    end;
+                {ok, undefined, Req1} ->
+                    {{false, <<"Basic realm=\"pushdings\"">>}, Req1, State}
+            end
+    end.
 
 content_types_accepted(Req, State) ->
     {[{{<<"application">>, <<"json">>, '*'}, from_json}], Req, State}.
@@ -29,13 +62,7 @@ from_json(Req0, AppId) ->
         pushdings:publish(AppId, Message),
         {true, Req1, AppId}
     catch
-        _:_Error ->
+        _:Error ->
+            pushdings:debug("failed to send message with reason: ~p", [Error]),
             {false, Req1, AppId}
     end.
-
-%% -----------------------------------------------------------------------------
-
-get_appid_and_token(Req0) ->
-    {AppId, Req1} = cowboy_req:header(<<"pushdings-app-id">>, Req0, <<>>),
-    {Token, Req2} = cowboy_req:header(<<"pushdings-app-token">>, Req1, <<>>),
-    {AppId, Token, Req2}.

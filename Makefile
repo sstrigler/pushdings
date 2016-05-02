@@ -1,8 +1,8 @@
 PROJECT = pushdings
-PROJECT_DESCRIPTION = Pushing Daisies
+PROJECT_DESCRIPTION = Pusheldy Dingseldey
 PROJECT_VERSION = 0.0.1
 
-DEPS = cowboy eper gproc hackney lager jsx
+DEPS = cowboy eper gen_smtp gproc hackney jsx lager uuid
 
 BUILD_DEPS = elvis_mk
 
@@ -22,7 +22,9 @@ SHELL_OPTS = -pa ebin \
 	-s $(PROJECT) \
 	-sname $(PROJECT)
 
-PLT_APPS = mnesia
+DIALYZER_DIRS = ebin
+
+PLT_APPS = crypto inets mnesia
 
 # Whitespace to be used when creating files from templates.
 SP = 4
@@ -31,3 +33,6 @@ include erlang.mk
 
 ERLC_OPTS += +'{parse_transform, lager_transform}'
 TEST_ERLC_OPTS += +'{parse_transform, lager_transform}'
+
+tarball: rel
+	cd _rel && tar cfvz ../$(PROJECT)-$(PROJECT_VERSION).tar.gz $(PROJECT) ; cd ..
