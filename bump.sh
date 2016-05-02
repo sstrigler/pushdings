@@ -18,10 +18,10 @@ patch=`echo $old | awk -F"[\.-]" '{print $3}'`
 
 snapshot=`echo $old | awk -F"[\.-]" '{print $4}'`
 
-if [[ -z $snapshot ]] || [[ $snapshot != "SNAPSHOT" ]]; then
-    echo "develop isn't set to a SNAPSHOT version in $appfile. Aborting...";
-    exit 1;
-fi
+# if [[ -z $snapshot ]] || [[ $snapshot != "SNAPSHOT" ]]; then
+#     echo "develop isn't set to a SNAPSHOT version in $appfile. Aborting...";
+#     exit 1;
+# fi
 
 if [ ! -z $1 ]; then
     if [ $1 == 'minor' ]; then
@@ -49,23 +49,23 @@ done
 git commit -m"bump version $new"
 
 git flow release finish $new
-git checkout master
+#git checkout master
 #git push
 #git push --tags
 
-git checkout develop
-git pull
+# git checkout develop
+# git pull
 
-let patch=$patch+1
-snapshot="$major.$minor.$patch-SNAPSHOT"
+# let patch=$patch+1
+# snapshot="$major.$minor.$patch-SNAPSHOT"
 
-echo "bumping $app to snapshot $snapshot"
+# echo "bumping $app to snapshot $snapshot"
 
-files="$appfile relx.config Makefile"
-for i in $files; do
-    echo "patching $i";
-    sed -i s/$new/$snapshot/ $i;
-    git add $i;
-done
-git commit -m"bump version $snapshot"
+# files="$appfile relx.config Makefile"
+# for i in $files; do
+#     echo "patching $i";
+#     sed -i s/$new/$snapshot/ $i;
+#     git add $i;
+# done
+# git commit -m"bump version $snapshot"
 #git push
