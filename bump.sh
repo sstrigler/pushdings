@@ -33,7 +33,7 @@ if [ ! -z $1 ]; then
         patch=0
     fi
 else
-    patch=`expr $path + 1`
+    patch=`expr $patch + 1`
 fi
 
 new=$major.$minor.$patch
@@ -45,7 +45,7 @@ git flow release start $new
 files="$appfile relx.config Makefile"
 for i in $files; do
     echo "patching $i";
-    sed -i s/$old/$new/ $i;
+    sed -i "" s/$old/$new/ $i;
     git add $i;
 done
 git commit -m"bump version $new"
