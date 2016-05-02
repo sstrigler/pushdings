@@ -14,11 +14,14 @@
 
     <script type="text/javascript">
 var app_id = "3ae9742a-d1c7-494a-abea-01e1cb00fec3";
+var app_token = "317074b1-1611-4740-8ba1-7797bb4ace37";
 
 var user_id = "user_123";
 var user_token = "my_token";
 
-var api_uri = "https://3ae9742a-d1c7-494a-abea-01e1cb00fec3:317074b1-1611-4740-8ba1-7797bb4ace37@pushdings.com/messages";
+var api_uri = "https://pushdings.com/messages";
+
+var ws_uri = "wss://pushdings.com/ws";
 
 function send(form, preset)
 {
@@ -35,7 +38,8 @@ function send(form, preset)
 
 function ajax_send(msg) {
     var r = new XMLHttpRequest();
-    r.open("POST", api_uri, true);
+    r.withCredentials = true;
+    r.open("POST", api_uri, true, app_id, app_token);
     r.setRequestHeader("Content-type", "application/json");
     r.send(JSON.stringify(msg));
 }
@@ -50,7 +54,7 @@ function connect() {
     }
 
     /* @todo: Change to your own server IP address */
-    var ws = new WebSocket("wss://pushdings.com/ws", "pushdings_v1");
+    var ws = new WebSocket(ws_uri, "pushdings_v1");
     ws.onopen = function() {
         console.log('Connected');
         ws.send(JSON.stringify(
