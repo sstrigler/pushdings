@@ -32,6 +32,8 @@ if [ ! -z $1 ]; then
         minor=0
         patch=0
     fi
+else; then
+    let patch=$path+1
 fi
 
 new=$major.$minor.$patch
