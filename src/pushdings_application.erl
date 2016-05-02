@@ -34,8 +34,11 @@ create(AppId, Token) when is_binary(AppId), AppId /= <<>>,
                               is_binary(Token), Token /= <<>> ->
     F = fun() ->
                 [] = mnesia:read(pushdings_app, AppId), % ensure not exists
-                mnesia:write(#pushdings_app{id    = AppId,
-                                            token = crypto:hash(sha256, Token)})
+                MaxClients = pushdings:config(max_clients_default, 3),
+                mnesia:write(#pushdings_app{
+                                id          = AppId,
+                                token       = crypto:hash(sha256, Token),
+                                max_clients = MaxClients})
         end,
     {atomic, ok} = mnesia:transaction(F),
     ok.
