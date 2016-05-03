@@ -29,9 +29,14 @@ is_authorized(Req, State, CheckF) ->
     end.
 
 forbidden(Req0, Id) ->
-    case cowboy_req:binding(id, Req0, <<>>) of
-        {Id, Req} -> {false, Req, Id};
-        {_,  Req} -> {true,  Req, Id}
+    case cowboy_req:method(Req0) of
+        %% options is always allowed
+        {<<"OPTIONS">>, Req0} -> {false, Req0, []};
+        {_Any,          Req0} ->
+            case cowboy_req:binding(id, Req0, <<>>) of
+                {Id, Req2} -> {false, Req2, Id};
+                {_,  Req2} -> {true,  Req2, []}
+            end
     end.
 
 %% ------------------------------ < internal > ---------------------------------
