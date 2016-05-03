@@ -9,11 +9,13 @@
 
 -export([from_json/2]).
 
+-define(METHODS, [<<"OPTIONS">>, <<"POST">>]).
+
 init(_, _Req, _Opts) -> {upgrade, protocol, cowboy_rest}.
 
-rest_init(Req, State) -> pushdings_rest:rest_init(Req, State).
+rest_init(Req, State) -> pushdings_rest:rest_init(Req, State, ?METHODS).
 
-allowed_methods(Req, State) -> {[<<"OPTIONS">>, <<"POST">>], Req, State}.
+allowed_methods(Req, State) -> {?METHODS, Req, State}.
 
 is_authorized(Req, State) ->
     pushdings_rest:is_authorized(Req, State,

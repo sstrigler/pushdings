@@ -1,16 +1,18 @@
 -module(pushdings_rest).
 
 -export([
-         rest_init/2,
+         rest_init/3,
          is_authorized/3,
          forbidden/2
         ]).
 
 -define(AUTH_HEADER, <<"Basic realm=\"pushdings\"">>).
 
+-include_lib("eunit/include/eunit.hrl").
+
 %% -----------------------------------------------------------------------------
 
-rest_init(Req, State) -> {ok, set_cors_header(Req), State}.
+rest_init(Req, State, Methods) -> {ok, set_cors_header(Req, Methods), State}.
 
 is_authorized(Req, State, CheckF) ->
     case cowboy_req:method(Req) of
@@ -41,7 +43,7 @@ forbidden(Req0, Id) ->
 
 %% ------------------------------ < internal > ---------------------------------
 
-set_cors_header(Req0) ->
+set_cors_header(Req0, Methods) ->
     case cowboy_req:header(<<"origin">>, Req0) of
         {undefined, Req1} -> Req1;
         {Origin, Req1}    ->
@@ -51,7 +53,7 @@ set_cors_header(Req0) ->
                      Origin, Req1),
             Req3 = cowboy_req:set_resp_header(
                      <<"access-control-allow-methods">>,
-                     <<"POST, OPTIONS">>, Req2),
+                     bin_join(Methods), Req2),
             Req4 = cowboy_req:set_resp_header(
                      <<"access-control-allow-credentials">>,
                      <<"true">>, Req3),
@@ -60,3 +62,20 @@ set_cors_header(Req0) ->
                      <<"authorization,content-type">>, Req4),
             Req5
     end.
+
+bin_join(Methods) -> bin_join(Methods, <<>>).
+
+bin_join([], Result)  -> Result;
+bin_join([H|T], <<>>) -> bin_join(T, <<H/binary>>);
+bin_join([H|T], Acc)  -> bin_join(T, <<Acc/binary, ", ", H/binary>>). 
+
+%% -------------------------------- < tests > ----------------------------------
+
+bin_join_test() ->
+    ?assertEqual(<<"A, B">>, bin_join([<<"A">>, <<"B">>])),
+    ?assertEqual(<<"A">>, bin_join([<<"A">>])).
+
+
+
+
+

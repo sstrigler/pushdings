@@ -1,15 +1,20 @@
 -module(pushdings_registrations_handler).
 
 -export([init/3,
+         rest_init/2,
          allowed_methods/2,
          content_types_accepted/2
         ]).
 
 -export([from_json/2]).
 
+-define(METHODS, [<<"OPTIONS">>, <<"POST">>]).
+
 init(_, _Req, _Opts) -> {upgrade, protocol, cowboy_rest}.
 
-allowed_methods(Req, State) -> {[<<"POST">>], Req, State}.
+rest_init(Req, State) -> pushdings_rest:rest_init(Req, State, ?METHODS).
+
+allowed_methods(Req, State) -> {?METHODS, Req, State}.
 
 content_types_accepted(Req, State) ->
     {[{{<<"application">>, <<"json">>, '*'}, from_json}], Req, State}.
