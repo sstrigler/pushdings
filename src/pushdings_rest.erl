@@ -67,15 +67,10 @@ bin_join(Methods) -> bin_join(Methods, <<>>).
 
 bin_join([], Result)  -> Result;
 bin_join([H|T], <<>>) -> bin_join(T, <<H/binary>>);
-bin_join([H|T], Acc)  -> bin_join(T, <<Acc/binary, ", ", H/binary>>). 
+bin_join([H|T], Acc)  -> bin_join(T, <<Acc/binary, ", ", H/binary>>).
 
 %% -------------------------------- < tests > ----------------------------------
 
 bin_join_test() ->
     ?assertEqual(<<"A, B">>, bin_join([<<"A">>, <<"B">>])),
     ?assertEqual(<<"A">>, bin_join([<<"A">>])).
-
-
-
-
-

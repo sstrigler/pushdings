@@ -20,8 +20,8 @@ rest_init(Req, State) -> pushdings_rest:rest_init(Req, State, ?METHODS).
 allowed_methods(Req, State) -> {?METHODS, Req, State}.
 
 is_authorized(Req, State) ->
-    pushdings_rest:is_authorized(Req, State,
-                                 fun pushdings_registration:is_password_valid/2).
+    pushdings_rest:is_authorized(
+      Req, State, fun pushdings_registration:is_password_valid/2).
 
 forbidden(Req, RegId) -> pushdings_rest:forbidden(Req, RegId).
 

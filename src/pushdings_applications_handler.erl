@@ -18,8 +18,8 @@ rest_init(Req, State) -> pushdings_rest:rest_init(Req, State, ?METHODS).
 allowed_methods(Req, State) -> {?METHODS, Req, State}.
 
 is_authorized(Req, State) ->
-    pushdings_rest:is_authorized(Req, State,
-                                 fun pushdings_registration:is_password_valid/2).
+    pushdings_rest:is_authorized(
+      Req, State, fun pushdings_registration:is_password_valid/2).
 
 content_types_accepted(Req, State) ->
     {[{{<<"application">>, <<"json">>, '*'}, from_json}], Req, State}.
