@@ -1,11 +1,11 @@
 -module(pushdings_application).
 
--export([as_map/1,
-         create/2,
+-export([create/2,
          get_auth_uri/1,
          get_max_clients/1,
          install/1,
          is_token_valid/2,
+         read/1,
          set_auth_uri/2,
          set_token/2,
          set_max_clients/2,
@@ -16,18 +16,6 @@
          token           :: binary(),
          auth_uri = <<>> :: binary(),
          max_clients = 3 :: pos_integer()}).
-
-%% -----------------------------------------------------------------------------
-
--spec as_map(AppId :: binary()) -> map().
-as_map(AppId) ->
-    [#pushdings_app{id          = Id,
-                    auth_uri    = Uri,
-                    max_clients = Clients}] =
-        mnesia:dirty_read(pushdings_app, AppId),
-    #{app_id      => Id,
-      auth_uri    => Uri,
-      max_clients => Clients}.
 
 %% -----------------------------------------------------------------------------
 
@@ -70,6 +58,19 @@ install(Nodes) ->
 -spec is_token_valid(AppId :: binary(), Token :: binary()) -> boolean().
 is_token_valid(AppId, Token) ->
     crypto:hash(sha256, Token) == get_prop(AppId, #pushdings_app.token).
+
+%% -----------------------------------------------------------------------------
+
+-spec read(AppId :: binary()) -> map().
+%% [TODO] add type spec for map
+read(AppId) ->
+    [#pushdings_app{id          = Id,
+                    auth_uri    = Uri,
+                    max_clients = Clients}] =
+        mnesia:dirty_read(pushdings_app, AppId),
+    #{app_id      => Id,
+      auth_uri    => Uri,
+      max_clients => Clients}.
 
 %% -----------------------------------------------------------------------------
 

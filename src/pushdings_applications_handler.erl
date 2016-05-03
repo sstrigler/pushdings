@@ -44,7 +44,7 @@ from_json(Req0, State) ->
         {Uri, Req2} = cowboy_req:url(Req1),
 
         RespBody = jsx:encode(
-                     (pushdings_application:as_map(AppId))#{token => AppToken}),
+                     (pushdings_application:read(AppId))#{token => AppToken}),
 
         Req3 = cowboy_req:set_resp_body(RespBody, Req2),
 
