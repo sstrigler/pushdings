@@ -1,6 +1,6 @@
 PROJECT = pushdings
 PROJECT_DESCRIPTION = Pusheldy Dingseldey
-PROJECT_VERSION = 1.0.1
+PROJECT_VERSION = 1.1.0
 
 DEPS = cowboy eper gen_smtp gproc hackney jsx lager uuid
 
@@ -35,4 +35,4 @@ ERLC_OPTS += +'{parse_transform, lager_transform}'
 TEST_ERLC_OPTS += +'{parse_transform, lager_transform}'
 
 tarball: rel
-	cd _rel && tar cfvz ../$(PROJECT)-$(PROJECT_VERSION).tar.gz $(PROJECT) ; cd ..
+	cd _rel && tar cfvz ../$(PROJECT)-$(PROJECT_VERSION).tar.gz $(PROJECT)

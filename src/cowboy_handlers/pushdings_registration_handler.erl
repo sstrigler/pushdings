@@ -1,6 +1,7 @@
 -module(pushdings_registration_handler).
 
 -export([init/3,
+         rest_init/2,
          allowed_methods/2,
          is_authorized/2,
          forbidden/2,
@@ -10,26 +11,19 @@
 
 -export([from_json/2]).
 
+-define(METHODS, [<<"OPTIONS">>, <<"PUT">>]).
+
 init(_, _Req, _Opts) -> {upgrade, protocol, cowboy_rest}.
 
-allowed_methods(Req, State) -> {[<<"PUT">>], Req, State}.
+rest_init(Req, State) -> pushdings_rest:rest_init(Req, State, ?METHODS).
 
-is_authorized(Req0, State) ->
-    case cowboy_req:parse_header(<<"authorization">>, Req0) of
-        {ok, {<<"basic">>, {RegId, RegPw}}, Req1} ->
-            case pushdings_registration:is_password_valid(RegId, RegPw) of
-                true  -> {true, Req1, RegId};
-                false -> {{false, <<"Basic realm=\"pushdings\"">>}, Req1, State}
-            end;
-        {ok, undefined, Req1} ->
-            {{false, <<"Basic realm=\"pushdings\"">>}, Req1, State}
-    end.
+allowed_methods(Req, State) -> {?METHODS, Req, State}.
 
-forbidden(Req0, RegId) ->
-    case cowboy_req:binding(id, Req0, <<>>) of
-        {RegId, Req} -> {false, Req, RegId};
-        {_,     Req} -> {true,  Req, RegId}
-    end.
+is_authorized(Req, State) ->
+    pushdings_rest:is_authorized(
+      Req, State, fun pushdings_registration:is_password_valid/2).
+
+forbidden(Req, RegId) -> pushdings_rest:forbidden(Req, RegId).
 
 resource_exists(Req, RegId) ->
     {pushdings_registration:exists(RegId), Req, RegId}.
