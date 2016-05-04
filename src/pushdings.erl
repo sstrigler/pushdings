@@ -32,15 +32,29 @@ start(_Type, _Args) ->
 
     Dispatch = cowboy_router:compile([
         {'_', [
-               {"/", cowboy_static, {priv_file, pushdings, "index.html"}},
-               {"/s/[...]", cowboy_static, {priv_dir, pushdings, ""}},
-               {"/applications",      pushdings_applications_handler, []},
-               {"/applications/:id",  pushdings_application_handler, []},
-               {"/messages",          pushdings_messages_handler, []},
+               {"/",
+                cowboy_static, {priv_file, pushdings, "index.html"}},
+
+               {"/s/[...]",
+                cowboy_static, {priv_dir, pushdings, "index.html"}},
+
+               {"/applications",
+                pushdings_applications_handler, []},
+
+               {"/applications/:id",
+                pushdings_application_handler, []},
+
+               {"/aplication/:id/messages",
+                pushdings_appication_messages_handler, []},
+
                {"/registrations/:id/confirmations",
                 pushdings_registration_confirmations_handler, []},
-               {"/registrations",     pushdings_registrations_handler, []},
-               {"/ws",                pushdings_ws_handler, []}
+
+               {"/registrations",
+                pushdings_registrations_handler, []},
+
+               {"/ws",
+                pushdings_ws_handler, []}
               ]}]),
 
     {StartFun, Config} = cowboy(config(ssl)),
