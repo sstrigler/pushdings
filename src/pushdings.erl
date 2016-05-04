@@ -5,6 +5,7 @@
 
 -export([config/1,
          config/2,
+         install/0,
          install/1,
          lift/1,
          num_subscriptions/1,
@@ -73,6 +74,8 @@ cowboy(false) -> {fun cowboy:start_http/4, config(tcp_opts)}.
 stop(_State) -> cowboy:stop_listener(pushdings_http_listener).
 
 %% --------------------------------- < api > -----------------------------------
+
+install() -> install([node()]).
 
 install(Nodes) ->
     ok = mnesia:create_schema(Nodes),
