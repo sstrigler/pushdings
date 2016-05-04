@@ -35,17 +35,14 @@ start(_Type, _Args) ->
                {"/",
                 cowboy_static, {priv_file, pushdings, "index.html"}},
 
-               {"/s/[...]",
-                cowboy_static, {priv_dir, pushdings, "index.html"}},
-
                {"/applications",
                 pushdings_applications_handler, []},
 
                {"/applications/:id",
                 pushdings_application_handler, []},
 
-               {"/aplication/:id/messages",
-                pushdings_appication_messages_handler, []},
+               {"/applications/:id/messages",
+                pushdings_application_messages_handler, []},
 
                {"/registrations/:id/confirmations",
                 pushdings_registration_confirmations_handler, []},
@@ -54,7 +51,11 @@ start(_Type, _Args) ->
                 pushdings_registrations_handler, []},
 
                {"/ws",
-                pushdings_ws_handler, []}
+                pushdings_ws_handler, []},
+
+               {"/[...]",
+                cowboy_static, {priv_dir, pushdings, ""}}
+
               ]}]),
 
     {StartFun, Config} = cowboy(config(ssl)),
