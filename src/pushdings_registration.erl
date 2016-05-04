@@ -1,6 +1,7 @@
 -module(pushdings_registration).
 
--export([confirm/2,
+-export([check_password/2,
+         confirm/2,
          create/1,
          exists/1,
          is_password_valid/2]).
@@ -17,6 +18,18 @@
           confirmed_at = 0 :: non_neg_integer(),
           created_at       :: non_neg_integer()
         }).
+
+%% -----------------------------------------------------------------------------
+%% registration needs to be activated
+-spec check_password(Email :: binary(), Password :: binary()) -> boolean().
+check_password(Email, Password) ->
+    HashedPassword = crypto:hash(sha256, Password),
+    case mnesia:dirty_read(pushdings_registration, Email) of
+        [#pushdings_registration{password = HashedPassword,
+                                 confirmed_at = Confirmed}]
+          when Confirmed /= undefined -> true;
+        _                             -> false
+    end.
 
 %% -----------------------------------------------------------------------------
 
