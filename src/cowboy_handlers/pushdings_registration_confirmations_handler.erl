@@ -1,4 +1,4 @@
--module(pushdings_registration_handler).
+-module(pushdings_registration_confirmations_handler).
 
 -export([init/3,
          rest_init/2,

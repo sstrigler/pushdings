@@ -37,7 +37,8 @@ start(_Type, _Args) ->
                {"/applications",      pushdings_applications_handler, []},
                {"/applications/:id",  pushdings_application_handler, []},
                {"/messages",          pushdings_messages_handler, []},
-               {"/registrations/:id", pushdings_registration_handler, []},
+               {"/registrations/:id/confirmations",
+                pushdings_registration_confirmations_handler, []},
                {"/registrations",     pushdings_registrations_handler, []},
                {"/ws",                pushdings_ws_handler, []}
               ]}]),
