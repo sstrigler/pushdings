@@ -36,7 +36,7 @@ content_types_accepted(Req, RegId) ->
 from_json(Req0, RegId) ->
     {ok, Body, Req1} = cowboy_req:body(Req0),
     try
-        #{eamil := RegId,
+        #{email := RegId,
           token := Token} = jsx:decode(Body, [{labels, atom}, return_maps]),
         ok = pushdings_registration:confirm(RegId, Token),
         {true, Req1, RegId}
