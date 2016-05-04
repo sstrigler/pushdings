@@ -11,7 +11,7 @@
 
 -export([from_json/2]).
 
--define(METHODS, [<<"OPTIONS">>, <<"PUT">>]).
+-define(METHODS, [<<"OPTIONS">>, <<"POST">>]).
 
 init(_, _Req, _Opts) -> {upgrade, protocol, cowboy_rest}.
 
@@ -36,7 +36,8 @@ content_types_accepted(Req, RegId) ->
 from_json(Req0, RegId) ->
     {ok, Body, Req1} = cowboy_req:body(Req0),
     try
-        #{token := Token} = jsx:decode(Body, [{labels, atom}, return_maps]),
+        #{eamil := RegId,
+          token := Token} = jsx:decode(Body, [{labels, atom}, return_maps]),
         ok = pushdings_registration:confirm(RegId, Token),
         {true, Req1, RegId}
     catch
