@@ -1,4 +1,4 @@
--module(pushdings_registration).
+-module(pushdings_account).
 
 -export([check_password/2,
          confirm/2,
@@ -10,7 +10,7 @@
 -export([install/1,
          tables/0]).
 
--record(pushdings_registration,
+-record(pushdings_account,
         {
           email            :: binary(),
           password         :: binary(),
@@ -24,9 +24,10 @@
 -spec check_password(Email :: binary(), Password :: binary()) -> boolean().
 check_password(Email, Password) ->
     HashedPassword = crypto:hash(sha256, Password),
-    case mnesia:dirty_read(pushdings_registration, Email) of
-        [#pushdings_registration{password = HashedPassword,
-                                 confirmed_at = Confirmed}]
+    case mnesia:dirty_read(pushdings_account, Email) of
+        [#pushdings_account{
+            password     = HashedPassword,
+            confirmed_at = Confirmed}]
           when Confirmed /= undefined -> true;
         _                             -> false
     end.
@@ -36,15 +37,15 @@ check_password(Email, Password) ->
 -spec confirm(Email :: binary(), Token :: binary()) -> ok.
 confirm(Email, Token) ->
     F = fun() ->
-                [Registration] = mnesia:read(pushdings_registration, Email),
+                [Registration] = mnesia:read(pushdings_account, Email),
                 Token = list_to_binary(
                           uuid:uuid_to_string(
-                            Registration#pushdings_registration.token,
+                            Registration#pushdings_account.token,
                             nodash
                            )),
-                case Registration#pushdings_registration.confirmed_at of
+                case Registration#pushdings_account.confirmed_at of
                     0 ->
-                        mnesia:write(Registration#pushdings_registration{
+                        mnesia:write(Registration#pushdings_account{
                                        confirmed_at = os:system_time()
                                       });
                     _ -> ok
@@ -60,10 +61,10 @@ confirm(Email, Token) ->
 create(#{email := Email, password := Password})
   when Email /= <<>>, Password /= <<>> ->
     F = fun() ->
-                [] = mnesia:read(pushdings_registration, Email),
+                [] = mnesia:read(pushdings_account, Email),
                 Token = uuid:get_v4(),
                 Registration =
-                    #pushdings_registration{
+                    #pushdings_account{
                        email      = Email,
                        password   = crypto:hash(sha256, Password),
                        token      = Token,
@@ -82,16 +83,16 @@ create(#{email := Email, password := Password})
 
 -spec exists(Email :: binary()) -> boolean().
 exists(Email) ->
-    length(mnesia:dirty_read(pushdings_registration, Email)) == 1.
+    length(mnesia:dirty_read(pushdings_account, Email)) == 1.
 
 %% ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 
 -spec is_password_valid(Email :: binary(), Password :: binary()) -> boolean().
 is_password_valid(Email, Password) ->
     HashedPassword = crypto:hash(sha256, Password),
-    case mnesia:dirty_read(pushdings_registration, Email) of
-        [#pushdings_registration{password = HashedPassword}] -> true;
-        _                                                    -> false
+    case mnesia:dirty_read(pushdings_account, Email) of
+        [#pushdings_account{password = HashedPassword}] -> true;
+        _                                               -> false
     end.
 
 %% -----------------------------------------------------------------------------
@@ -100,15 +101,15 @@ is_password_valid(Email, Password) ->
 install(Nodes) ->
     {atomic, ok} =
         mnesia:create_table(
-          pushdings_registration,
+          pushdings_account,
           [{disc_copies, Nodes},
-           {attributes, record_info(fields, pushdings_registration)}]),
+           {attributes, record_info(fields, pushdings_account)}]),
     ok.
 
 %% ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 
 -spec tables() -> list(atom()).
-tables() -> [pushdings_registration].
+tables() -> [pushdings_account].
 
 %% ------------------------------ < internal > ---------------------------------
 -spec send_email(binary(), binary()) -> {ok, term()}

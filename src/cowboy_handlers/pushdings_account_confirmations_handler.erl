@@ -1,4 +1,4 @@
--module(pushdings_registration_confirmations_handler).
+-module(pushdings_account_confirmations_handler).
 
 -export([init/3,
          rest_init/2,
@@ -21,12 +21,12 @@ allowed_methods(Req, State) -> {?METHODS, Req, State}.
 
 is_authorized(Req, State) ->
     pushdings_rest:is_authorized(
-      Req, State, fun pushdings_registration:is_password_valid/2).
+      Req, State, fun pushdings_account:is_password_valid/2).
 
 forbidden(Req, RegId) -> pushdings_rest:forbidden(Req, RegId).
 
 resource_exists(Req, RegId) ->
-    {pushdings_registration:exists(RegId), Req, RegId}.
+    {pushdings_account:exists(RegId), Req, RegId}.
 
 content_types_accepted(Req, RegId) ->
     {[{{<<"application">>, <<"json">>, '*'}, from_json}], Req, RegId}.
@@ -38,7 +38,7 @@ from_json(Req0, RegId) ->
     try
         #{email := RegId,
           token := Token} = jsx:decode(Body, [{labels, atom}, return_maps]),
-        ok = pushdings_registration:confirm(RegId, Token),
+        ok = pushdings_account:confirm(RegId, Token),
         {true, Req1, RegId}
     catch
         _:Error ->

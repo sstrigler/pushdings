@@ -29,27 +29,27 @@
 start(_Type, _Args) ->
     mnesia:wait_for_tables(
       pushdings_application:tables() ++
-          pushdings_registration:tables(), 5000),
+          pushdings_account:tables(), 5000),
 
     Dispatch = cowboy_router:compile([
         {'_', [
                {"/",
                 cowboy_static, {priv_file, pushdings, "index.html"}},
 
-               {"/applications",
+               {"/accounts",
+                pushdings_accounts_handler, []},
+
+               {"/accounts/:id/applications",
                 pushdings_applications_handler, []},
 
-               {"/applications/:id",
+               {"/accounts/:id/applications/:app_id",
                 pushdings_application_handler, []},
+
+               {"/accounts/:id/confirmations",
+                pushdings_account_confirmations_handler, []},
 
                {"/messages",
                 pushdings_messages_handler, []},
-
-               {"/registrations",
-                pushdings_registrations_handler, []},
-
-               {"/registrations/:id/confirmations",
-                pushdings_registration_confirmations_handler, []},
 
                {"/ws",
                 pushdings_ws_handler, []},
@@ -81,7 +81,7 @@ install(Nodes) ->
     ok = mnesia:create_schema(Nodes),
     ok = application:start(mnesia),
     pushdings_application:install(Nodes),
-    pushdings_registration:install(Nodes).
+    pushdings_account:install(Nodes).
 
 %% ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 

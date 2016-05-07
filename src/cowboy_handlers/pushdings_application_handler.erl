@@ -21,20 +21,21 @@ allowed_methods(Req, State) -> {?METHODS, Req, State}.
 
 is_authorized(Req, State) ->
     pushdings_rest:is_authorized(Req, State,
-                                 fun pushdings_application:is_token_valid/2).
+                                 fun pushdings_account:check_password/2).
 
-forbidden(Req, AppId) -> pushdings_rest:forbidden(Req, AppId).
+forbidden(Req, Id) -> pushdings_rest:forbidden(Req, Id).
 
 content_types_provided(Req, State) ->
     {[{{<<"application">>, <<"json">>, '*'}, to_json}], Req, State}.
 
-resource_exists(Req, AppId) ->
+resource_exists(Req0, Id) ->
     try
+        {AppId, Req1} = cowboy_req:binding(app_id, Req0),
         App = pushdings_application:read(AppId),
-        {true, Req, App}
+        {true, Req1, App}
     catch
         _:{badmatch, _} ->
-            {false, Req, AppId}
+            {false, Req0, Id}
     end.
 
 %% ------------------------------- < internal > --------------------------------

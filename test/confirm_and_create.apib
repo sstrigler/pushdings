@@ -10,14 +10,9 @@ POST {{<reg_uri}}/confirmations
 
 # create
 
-POST /applications
+POST {{<reg_uri}}/applications
 > Content-type: application/json
 > Authorization: Basic {{<authorization}}
 {}
 < 303
-< Content-type: application/json
 < Location: {{>app_uri}}
-{
-  "id": "{{>app_id}}",
-  "token": "{{>app_token}}"
-}

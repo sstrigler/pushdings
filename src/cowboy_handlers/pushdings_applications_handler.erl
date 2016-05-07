@@ -9,6 +9,7 @@
          rest_init/2,
          allowed_methods/2,
          is_authorized/2,
+         forbidden/2,
          content_types_accepted/2
         ]).
 
@@ -24,14 +25,16 @@ allowed_methods(Req, State) -> {?METHODS, Req, State}.
 
 is_authorized(Req, State) ->
     pushdings_rest:is_authorized(
-      Req, State, fun pushdings_registration:check_password/2).
+      Req, State, fun pushdings_account:check_password/2).
 
-content_types_accepted(Req, State) ->
-    {[{{<<"application">>, <<"json">>, '*'}, from_json}], Req, State}.
+forbidden(Req, Id) -> pushdings_rest:forbidden(Req, Id).
+
+content_types_accepted(Req, Id) ->
+    {[{{<<"application">>, <<"json">>, '*'}, from_json}], Req, Id}.
 
 %% -----------------------------------------------------------------------------
 
-from_json(Req0, State) ->
+from_json(Req0, Id) ->
     {ok, Body, Req1} = cowboy_req:body(Req0),
     try
         Json = json_decode(Body),
@@ -46,18 +49,11 @@ from_json(Req0, State) ->
 
         {Uri, Req2} = cowboy_req:url(Req1),
 
-        RespBody = jsx:encode(
-                     (pushdings_application:read(AppId))#{token => AppToken}),
-
-        Req3 = cowboy_req:set_resp_body(RespBody, Req2),
-        Req4 = cowboy_req:set_resp_header(<<"content-type">>,
-                                          <<"application/json">>,
-                                          Req3),
-        {{true, uri(Uri, AppId)}, Req4, State}
+        {{true, uri(Uri, AppId)}, Req2, Id}
     catch
         _:Error ->
             pushdings:debug("creating app failed: ~p", [Error]),
-            {false, Req1, State}
+            {false, Req1, Id}
     end.
 
 %% -----------------------------------------------------------------------------

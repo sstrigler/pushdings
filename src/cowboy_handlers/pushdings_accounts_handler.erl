@@ -1,4 +1,4 @@
--module(pushdings_registrations_handler).
+-module(pushdings_accounts_handler).
 
 -export([init/3,
          rest_init/2,
@@ -25,7 +25,7 @@ from_json(Req0, State) ->
     {ok, Body, Req1} = cowboy_req:body(Req0),
     try
         Json = jsx:decode(Body, [{labels, atom}, return_maps]),
-        Id = pushdings_registration:create(Json),
+        Id = pushdings_account:create(Json),
         {Uri, Req2} = cowboy_req:url(Req1),
         {{true, uri(Uri, Id)}, Req2, State}
     catch
