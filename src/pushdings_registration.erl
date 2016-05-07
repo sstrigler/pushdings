@@ -37,15 +37,19 @@ check_password(Email, Password) ->
 confirm(Email, Token) ->
     F = fun() ->
                 [Registration] = mnesia:read(pushdings_registration, Email),
-
                 Token = list_to_binary(
                           uuid:uuid_to_string(
                             Registration#pushdings_registration.token,
                             nodash
                            )),
-                mnesia:write(Registration#pushdings_registration{
-                               confirmed_at = os:system_time()
-                              })
+                case Registration#pushdings_registration.confirmed_at of
+                    0 ->
+                        mnesia:write(Registration#pushdings_registration{
+                                       confirmed_at = os:system_time()
+                                      });
+                    _ -> ok
+                end
+
         end,
     {atomic, ok} = mnesia:transaction(F),
     ok.
