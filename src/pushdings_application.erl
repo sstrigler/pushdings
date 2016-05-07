@@ -71,7 +71,7 @@ read(AppId) ->
          auth_uri    = Uri,
          max_clients = Clients}] =
         mnesia:dirty_read(?TAB, AppId),
-    #{app_id      => Id,
+    #{id          => Id,
       auth_uri    => Uri,
       max_clients => Clients}.
 
