@@ -1,10 +1,9 @@
--module(pushdings_application_messages_handler).
+-module(pushdings_messages_handler).
 
 -export([init/3,
          rest_init/2,
          allowed_methods/2,
          is_authorized/2,
-         forbidden/2,
          content_types_accepted/2
         ]).
 
@@ -22,10 +21,8 @@ is_authorized(Req, State) ->
     pushdings_rest:is_authorized(Req, State,
                                  fun pushdings_application:is_token_valid/2).
 
-forbidden(Req, AppId) -> pushdings_rest:forbidden(Req, AppId).
-
-content_types_accepted(Req, AppId) ->
-    {[{{<<"application">>, <<"json">>, '*'}, from_json}], Req, AppId}.
+content_types_accepted(Req, State) ->
+    {[{{<<"application">>, <<"json">>, '*'}, from_json}], Req, State}.
 
 %% -----------------------------------------------------------------------------
 
