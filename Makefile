@@ -6,7 +6,10 @@ DEPS = cowboy eper gen_smtp gproc hackney jsx lager uuid
 
 BUILD_DEPS = elvis_mk
 
+TEST_DEPS = katt
+
 dep_elvis_mk = git https://github.com/inaka/elvis.mk.git 784e41b
+dep_katt = git https://github.com/for-GET/katt.git master
 
 DEP_PLUGINS = elvis_mk
 
