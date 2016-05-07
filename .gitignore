@@ -12,3 +12,4 @@
 /pushdings-*.tar.gz
 /logs/
 /ct.coverdata
+/test/ct.cover.spec

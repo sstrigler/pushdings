@@ -1,0 +1,8 @@
+POST {{<reg_uri}}/confirmations
+> Content-type: application/json
+> Authorization: Basic {{<authorization}}
+{
+  "email": "{{<email}}",
+  "token": "{{<token}}"
+}
+< 204

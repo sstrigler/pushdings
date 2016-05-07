@@ -1,0 +1,10 @@
+# Create App
+
+POST /registrations
+> Content-type: application/json
+{
+  "email": "{{<email}}",
+  "password": "{{<password}}"
+}
+< 303
+< Location: {{>reg_uri}}

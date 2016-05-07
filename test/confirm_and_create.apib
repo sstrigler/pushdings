@@ -1,0 +1,23 @@
+# confirm
+POST {{<reg_uri}}/confirmations
+> Content-type: application/json
+> Authorization: Basic {{<authorization}}
+{
+  "email": "{{<email}}",
+  "token": "{{<token}}"
+}
+< 204
+
+# create
+
+POST /applications
+> Content-type: application/json
+> Authorization: Basic {{<authorization}}
+{}
+< 303
+< Content-type: application/json
+< Location: {{>app_uri}}
+{
+  "id": "{{>app_id}}",
+  "token": "{{>app_token}}"
+}
