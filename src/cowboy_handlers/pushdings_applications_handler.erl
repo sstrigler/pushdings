@@ -50,13 +50,17 @@ from_json(Req0, State) ->
                      (pushdings_application:read(AppId))#{token => AppToken}),
 
         Req3 = cowboy_req:set_resp_body(RespBody, Req2),
-
-        {{true, uri(Uri, AppId)}, Req3, State}
+        Req4 = cowboy_req:set_resp_header(<<"content-type">>,
+                                          <<"application/json">>,
+                                          Req3),
+        {{true, uri(Uri, AppId)}, Req4, State}
     catch
         _:Error ->
             pushdings:debug("creating app failed: ~p", [Error]),
             {false, Req1, State}
     end.
+
+%% -----------------------------------------------------------------------------
 
 gen_uuid() ->
     list_to_binary(
