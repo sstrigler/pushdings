@@ -68,10 +68,12 @@ is_token_valid(AppId, Token) ->
 read(AppId) ->
     [#?TAB{
          id          = Id,
+         token       = Token,
          auth_uri    = Uri,
          max_clients = Clients}] =
         mnesia:dirty_read(?TAB, AppId),
     #{id          => Id,
+      token       => Token,
       auth_uri    => Uri,
       max_clients => Clients}.
 

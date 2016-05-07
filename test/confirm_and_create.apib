@@ -16,3 +16,14 @@ POST {{<reg_uri}}/applications
 {}
 < 303
 < Location: {{>app_uri}}
+
+# Check
+
+GET {{<app_uri}}
+> Accept: application/json
+> Authorization: Basic {{<authorization}}
+< 200
+< Content-type: application/json
+{
+  "token": "{{>app_token}}"
+}
